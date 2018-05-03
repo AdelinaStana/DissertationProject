@@ -26,9 +26,18 @@ class AnalysisManager:
         else:
             print("Cannot set "+directory+" as working directory!")
 
+    def getDeletedFilesXML(self):
+        for root, directories, filenames in os.walk(self.workingDir+"\~deleted"):
+            for filename in filenames:
+                file = os.path.join(root, filename)
+                returnVal, pathToFile = self.srcMLWrapper.convertFiles(file)
+                self.convertedFilesList.append(pathToFile)
+
     def getGitCommits(self):
         gitWrapper = GitWrapper(self.workingDir)
         gitWrapper.getRepo()
+
+        self.getDeletedFilesXML()
 
     def convertToXML(self):
         for file in self.filesList:

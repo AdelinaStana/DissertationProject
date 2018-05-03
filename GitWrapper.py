@@ -5,7 +5,7 @@ EMPTY_TREE_SHA   = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 
 class GitWrapper:
     def __init__(self, directory):
-        self.workingDir = directory
+        self.repo_path = directory
 
     def parseFilesTree(self, tree):
         try:
@@ -43,21 +43,63 @@ class GitWrapper:
 
         print('Last commit for repo is {}.'.format(str(repo.head.commit.hexsha)))
 
-    def getRepo(self):
-        repo_path = self.workingDir
-        repo = Repo(repo_path)
-        current_dir = os.getcwd()
-        os.chdir(repo_path)
-        try:
-            os.mkdir(repo_path+"\~diffs")
-        except BaseException :
-            shutil.rmtree(repo_path+"\~diffs")
-            os.mkdir(repo_path + "\~diffs")
-
+    def getNrOfChangedFiles(self, commit, parent):
         acceptedSuffix = ['.cpp', '.h', '.cc', '.c++', '.java']
 
+        changedFiles = [item.a_path for item in commit.diff(parent)]
+        nrOfFilesChanged = 0
+        for file in changedFiles:
+            fileName, fileExtension = os.path.splitext(file)
+            if fileExtension in acceptedSuffix:
+                nrOfFilesChanged += 1
+
+        return nrOfFilesChanged
+
+    def findFile(self, file):
+        for path, subdirs, files in os.walk(self.repo_path):
+            for name in files:
+                if name == file:
+                    return True
+        return False
+
+    def getFileFromGit(self, commit, path):
+
+        try:
+            os.system("git --work-tree=" + self.repo_path + "\~deleted checkout "+commit.hexsha+" "+path)
+        except BaseException as e:
+            print(e)
+
+    def getDeletedFiles(self, commit, parent):
+        acceptedSuffix = ['.cpp', '.h', '.cc', '.c++', '.java']
+
+        for diff_added in commit.diff(parent).iter_change_type('D'):
+            other, file = os.path.split(diff_added.b_path)
+            fileName, fileExtension = os.path.splitext(file)
+            if fileExtension in acceptedSuffix and not self.findFile(file):
+                self.getFileFromGit(commit, diff_added.b_path)
+
+    def createFolders(self):
+        try:
+            os.mkdir(self.repo_path + "\~deleted")
+        except BaseException:
+            shutil.rmtree(self.repo_path + "\~deleted")
+            os.mkdir(self.repo_path + "\~deleted")
+
+        try:
+            os.mkdir(self.repo_path+"\~diffs")
+        except BaseException :
+            shutil.rmtree(self.repo_path+"\~diffs")
+            os.mkdir(self.repo_path + "\~diffs")
+
+    def getRepo(self):
+        repo = Repo(self.repo_path)
+        current_dir = os.getcwd()
+        os.chdir(self.repo_path)
+
+        self.createFolders()
+
         if not repo.bare:
-            print('Repo at '+repo_path+' successfully loaded.')
+            print('Repo at '+self.repo_path+' successfully loaded.')
             # self.print_repository(repo)
             commits = list(repo.iter_commits('master'))[:2500]
             print('Number of commits : {}'.format(len(commits)))
@@ -65,18 +107,14 @@ class GitWrapper:
             printNr = 0
             for commit in commits:
                 parent = commit.parents[0] if commit.parents else EMPTY_TREE_SHA
-                changedFiles = [item.a_path for item in commit.diff(parent)]
-                nrOfFilesChanged = 0
-                for file in changedFiles:
-                    fileName, fileExtension = os.path.splitext(file)
-                    if fileExtension in acceptedSuffix:
-                        nrOfFilesChanged += 1
+                self.getDeletedFiles(commit, parent)
+                nrOfFilesChanged = self.getNrOfChangedFiles(commit, parent)
                 if nrOfFilesChanged >= 1:
-                    os.system("git diff "+parent.hexsha+" "+commit.hexsha+" > "+repo_path+"\~diffs\diff"+str(nr)+"_FilesChanged_"+str(nrOfFilesChanged)+".txt")
+                    os.system("git diff "+parent.hexsha+" "+commit.hexsha+" > "+self.repo_path+"\~diffs\diff"+str(nr)+"_FilesChanged_"+str(nrOfFilesChanged)+".txt")
                     nr += 1
                 printNr += 1
                 print(printNr)
         else:
-            print('Could not load repository at ' + repo_path + '.')
+            print('Could not load repository at ' + self.repo_path + '.')
 
         os.chdir(current_dir)
