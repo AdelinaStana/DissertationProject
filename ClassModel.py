@@ -11,6 +11,7 @@ class ClassModel():
         self.git_links_below20 = []
         self.git_links_more = []
         self.relation_list = []
+        self.ignore_list = ['int', 'float', 'String', 'long', 'boolean']
 
     def setGitLinks(self, links, nrOfCommits):
         for link in links:
@@ -83,6 +84,8 @@ class ClassModel():
 
         if self.superclass != "None":
             self.relation_list.append(self.superclass)
+
+        self.relation_list = [x for x in self.relation_list if x not in self.ignore_list]
 
     def printDetails(self, UIObj):
         UIObj.printLine("________________________________")

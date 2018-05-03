@@ -1,8 +1,12 @@
-from srcMLWrapper import srcMLWrapper
-from StructureManager import *
-from GitWrapper import GitWrapper
-import os, re
+import os
+import re
+
 import networkx as nx
+
+from GitWrapper import GitWrapper
+from StructureManager import *
+from srcMLWrapper import srcMLWrapper
+
 
 class AnalysisManager:
     def __init__(self, parent, workingDir):
@@ -256,6 +260,7 @@ class AnalysisManager:
 
     def buildModel(self):
         import matplotlib.pyplot as plt
+        print("Number of classes: "+str(len(self.structureManager.getClassList())))
         self.createCodeLinksPlot(plt)
         self.createGitLinksPlot(plt)
         self.createGit5LinksPlot(plt)

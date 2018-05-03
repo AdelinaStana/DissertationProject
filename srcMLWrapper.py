@@ -107,7 +107,9 @@ class srcMLWrapper:
 
         for decl in self.getAllItems(item, tag):
             element_name = self.getName(decl)
-            print(element_name)
+            if element_type == "java":
+                specifier_item = self.getItem(decl, "specifier")
+                element_type = self.getText(specifier_item)
             method = MethodModel()
             method.setType(element_type)
             method.setName(element_name)
@@ -154,26 +156,20 @@ class srcMLWrapper:
         for item in root.findall("{http://www.srcML.org/srcML/src}class"):
             classModel = ClassModel()
 
-
             classModel.setFile(file)
             classModel.setName(self.getName(item))
             classModel.setSuperClass(self.getItemName(item, "super"))
 
             block = self.getItem(item, 'block')
-            for atr in block:
-                element_type = self.getText(atr)
 
-                for attribute in self.getAttributes(atr, "decl_stmt"):
-                    classModel.addAttribute(attribute)
+            for attribute in self.getAttributes(block, "decl_stmt"):
+                classModel.addAttribute(attribute)
 
-                for method in self.getMethods(atr, "function_decl", element_type):
-                    classModel.addMethod(method)
+            for method in self.getMethods(block, "function", "java"):
+                classModel.addMethod(method)
 
-                for method in self.getMethods(atr, "constructor_decl", element_type):
-                    classModel.addMethod(method)
-
-                for method in self.getMethods(atr, "function", element_type):
-                    classModel.addMethod(method)
+            for method in self.getMethods(block, "constructor", "java"):
+                classModel.addMethod(method)
 
             classList.append(classModel)
 
@@ -215,7 +211,7 @@ class srcMLWrapper:
     def getClassModel(self, file):
         classList = []
 
-        if file.endswith('.java'):
+        if file.endswith('.java.xml'):
             classList = self.getClassModelJava(file)
         else:
             classList = self.getClassModelCpp(file)

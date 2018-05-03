@@ -79,18 +79,15 @@ class Dialog(QMainWindow):
 
         loadAction = QAction(QtGui.QIcon('resources/installed.png'), 'Load Files', self)
         processAction = QAction(QtGui.QIcon('resources/run.png'), 'Process Files', self)
-        terminalAction = QAction(QtGui.QIcon('resources/terminal.png'), 'Teminal', self)
         xmlLoadAction = QAction(QtGui.QIcon('resources/load.png'), 'XML File', self)
 
         processAction.triggered.connect(self.processFilesClicked)
         xmlLoadAction.triggered.connect(self.loadXmlClicked)
         loadAction.triggered.connect(self.loadFilesClicked)
-        terminalAction.triggered.connect(self.terminalClicked)
 
         self.toolbar.addAction(loadAction)
         self.toolbar.addAction(processAction)
         self.toolbar.addAction(xmlLoadAction)
-        self.toolbar.addAction(terminalAction)
 
         self.toolbar.setIconSize(QtCore.QSize(65, 65))
 
@@ -109,14 +106,12 @@ class Dialog(QMainWindow):
     def mousePressEvent(self, event):
         self.offset = event.pos()
 
-
     def mouseMoveEvent(self, event):
         x = event.globalX()
         y = event.globalY()
         x_w = self.offset.x()
         y_w = self.offset.y()
         self.move(x - x_w, y - y_w)
-
 
     def paintEvent(self, event):
         palette = QtGui.QPalette()
@@ -185,7 +180,7 @@ class Dialog(QMainWindow):
         self.analysisManager.setFilesList(filenames)
         self.analysisManager.setWorkingDir(repoDir)
         self.printLine("Files loaded:\n")
-        '''total = len(filenames)
+        total = len(filenames)
         count = 1
         for file in filenames:
             self.printLine(file+"\n")
@@ -193,14 +188,14 @@ class Dialog(QMainWindow):
             self.progressBar.update()
             count += 1
 
-        self.printLine("Total number of files loaded : {}".format(total))'''
+        self.printLine("Total number of files loaded : {}".format(total))
 
     def processFilesClicked(self):
         #self.analysisManager.setXMLFilesList(self.model.rootDir+"//~Temp")
         self.printLine("Converting to XML .......")
         self.analysisManager.convertToXML()
         self.printLine("Getting commits .......")
-        #self.analysisManager.getGitCommits()
+        self.analysisManager.getGitCommits()
         self.printLine("Building model .......")
         self.analysisManager.processData()
         self.analysisManager.buildModel()
@@ -208,9 +203,6 @@ class Dialog(QMainWindow):
     def printLine(self, text):
         self.app.processEvents()
         self.progressLine.setText(text)
-
-    def terminalClicked(self):
-        self.clearLayout(self.main_layout)
 
     def changeLayout(self):
         self.clearLayout(self.main_layout)
