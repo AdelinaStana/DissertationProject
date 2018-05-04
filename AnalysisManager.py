@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 
 import networkx as nx
 
@@ -19,9 +20,16 @@ class AnalysisManager:
         self.structureManager = StructureManager()
         self.srcMLWrapper = srcMLWrapper(self.workingDir)
 
+
     def setWorkingDir(self, directory):
         if os.path.isdir(directory):
             self.workingDir = directory
+            try:
+                os.mkdir(self.workingDir + "\~results")
+            except BaseException:
+                shutil.rmtree(self.workingDir + "\~results")
+                os.mkdir(self.workingDir + "\~results")
+
             self.srcMLWrapper = srcMLWrapper(self.workingDir)
         else:
             print("Cannot set "+directory+" as working directory!")
@@ -271,10 +279,15 @@ class AnalysisManager:
         import matplotlib.pyplot as plt
         print("Number of classes: "+str(len(self.structureManager.getClassList())))
         self.createCodeLinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig1", dpi=100)
         self.createGitLinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig2", dpi=100)
         self.createGit5LinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig3", dpi=100)
         self.createGit20LinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig4", dpi=100)
         self.createCodeAndGitPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig5", dpi=100)
         plt.show()
 
 

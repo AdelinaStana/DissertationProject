@@ -146,14 +146,14 @@ class srcMLWrapper:
                 return self.getNamespaceRoot(root)
         return root
 
-    def getClassModelJava(self, file):
+
+    def getClassModelJava(self, file, root):
         classList = []
 
-        import xml.etree.ElementTree as ET
-        tree = ET.parse(file)
-        root = tree.getroot()
-
         for item in root.findall("{http://www.srcML.org/srcML/src}class"):
+            insideClassList = self.getClassModelJava(file, item)
+            if insideClassList:
+                classList.extend(insideClassList)
             classModel = ClassModel()
 
             classModel.setFile(file)
@@ -181,6 +181,7 @@ class srcMLWrapper:
         tree = ET.parse(file)
         root = tree.getroot()
 
+        root = self.getNamespaceRoot(root)
         for item in root.findall("{http://www.srcML.org/srcML/src}class"):
             classModel = ClassModel()
 
@@ -210,9 +211,12 @@ class srcMLWrapper:
 
     def getClassModel(self, file):
         classList = []
+        import xml.etree.ElementTree as ET
+        tree = ET.parse(file)
+        root = tree.getroot()
 
         if file.endswith('.java.xml'):
-            classList = self.getClassModelJava(file)
+            classList = self.getClassModelJava(file, root)
         else:
             classList = self.getClassModelCpp(file)
 
