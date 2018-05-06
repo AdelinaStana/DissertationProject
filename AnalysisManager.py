@@ -132,9 +132,9 @@ class AnalysisManager:
                     if re.search('.*class .*\{', line) or re.search('.* public class.*', line) or re.search('.* private class .*', line):
                         words = line.split(' ')
                         for i in range(0, len(words)):
-                            word = words[i]
-                            if word == 'class' and words[i + 1] not in git_link_list:
-                                git_link_list.append(words[i + 1])
+                            word = words[i].strip()
+                            if word == 'class' and words[i + 1].strip() not in git_link_list:
+                                git_link_list.append(words[i + 1].strip())
             except BaseException as e:
                 print(e)
 
