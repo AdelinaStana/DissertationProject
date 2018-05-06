@@ -101,7 +101,7 @@ class GitWrapper:
             if not repo.bare:
                 print('Repo at '+self.repo_path+' successfully loaded.')
                 # self.print_repository(repo)
-                commits = list(repo.iter_commits('prettyfaces3'))[:2500]
+                commits = list(repo.iter_commits('master'))[:2500]
                 print('Number of commits : {}'.format(len(commits)))
                 nr = 0
                 printNr = 0

@@ -194,25 +194,23 @@ class AnalysisManager:
                 node_size=size_list,
                 node_color=color_list)
 
-    def createGitLinksPlot(self, plt):
-        plt.figure(2)
+    def createCodeLinksPlot(self, plt):
+        plt.figure(1)
         g = nx.Graph()
-
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                git_list = classItem.getGitLinksTotal()
-                for related in git_list:
+                related_list = classItem.getRelated()
+                for related in related_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
 
-        g = self.clearNodesWithoutEdges(g)
-        plt.title("Git Links. Count:" + str(g.number_of_edges()))
+        plt.title("Code Links. Count: " + str(g.number_of_edges()))
         self.drawGraph(g)
 
     def createGit5LinksPlot(self, plt):
-        plt.figure(3)
+        plt.figure(2)
         g = nx.Graph()
 
         try:
@@ -229,7 +227,7 @@ class AnalysisManager:
         self.drawGraph(g)
 
     def createGit20LinksPlot(self, plt):
-        plt.figure(4)
+        plt.figure(3)
         g = nx.Graph()
 
         try:
@@ -246,7 +244,7 @@ class AnalysisManager:
         self.drawGraph(g)
 
     def createGit20PlusLinksPlot(self, plt):
-        plt.figure(5)
+        plt.figure(4)
         g = nx.Graph()
 
         try:
@@ -260,6 +258,23 @@ class AnalysisManager:
 
         g = self.clearNodesWithoutEdges(g)
         plt.title("Git Links above 20. Count:" + str(g.number_of_edges()))
+        self.drawGraph(g)
+
+    def createGitLinksPlot(self, plt):
+        plt.figure(5)
+        g = nx.Graph()
+
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                git_list = classItem.getGitLinksTotal()
+                for related in git_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+
+        g = self.clearNodesWithoutEdges(g)
+        plt.title("Git Links. Count:" + str(g.number_of_edges()))
         self.drawGraph(g)
 
     def createCodeAndGitPlot(self, plt):
@@ -278,33 +293,18 @@ class AnalysisManager:
         plt.title("Code+Git Links. Count: " + str(g.number_of_edges()))
         self.drawGraph(g)
 
-    def createCodeLinksPlot(self, plt):
-        plt.figure(1)
-        g = nx.Graph()
-        try:
-            for classItem in self.structureManager.getClassList():
-                g.add_node(classItem.name)
-                related_list = classItem.getRelated()
-                for related in related_list:
-                    g.add_edge(classItem.name, related)
-        except BaseException as e:
-            print(e)
-
-        plt.title("Code Links. Count: " + str(g.number_of_edges()))
-        self.drawGraph(g)
-
     def buildModel(self):
         import matplotlib.pyplot as plt
         print("Number of classes: "+str(len(self.structureManager.getClassList())))
         self.createCodeLinksPlot(plt)
         plt.savefig(self.workingDir + "\~results\\fig1", dpi=100)
-        self.createGitLinksPlot(plt)
-        plt.savefig(self.workingDir + "\~results\\fig2", dpi=100)
         self.createGit5LinksPlot(plt)
-        plt.savefig(self.workingDir + "\~results\\fig3", dpi=100)
+        plt.savefig(self.workingDir + "\~results\\fig2", dpi=100)
         self.createGit20LinksPlot(plt)
-        plt.savefig(self.workingDir + "\~results\\fig4", dpi=100)
+        plt.savefig(self.workingDir + "\~results\\fig3", dpi=100)
         self.createGit20PlusLinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig4", dpi=100)
+        self.createGitLinksPlot(plt)
         plt.savefig(self.workingDir + "\~results\\fig5", dpi=100)
         self.createCodeAndGitPlot(plt)
         plt.savefig(self.workingDir + "\~results\\fig6", dpi=100)
