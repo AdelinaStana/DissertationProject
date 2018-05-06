@@ -17,7 +17,7 @@ class AnalysisManager:
             os.mkdir(self.workingDir)
         self.filesList = []
         self.convertedFilesList = []
-        self.structureManager = StructureManager()
+        self.structureManager = StructureManager(self.workingDir)
         self.srcMLWrapper = srcMLWrapper(self.workingDir)
 
 
@@ -31,6 +31,7 @@ class AnalysisManager:
                 os.mkdir(self.workingDir + "\~results")
 
             self.srcMLWrapper = srcMLWrapper(self.workingDir)
+            self.structureManager = StructureManager(self.workingDir)
         else:
             print("Cannot set "+directory+" as working directory!")
 
@@ -128,7 +129,7 @@ class AnalysisManager:
                                 if name not in git_link_list:
                                     git_link_list.append(name[0])
 
-                    if re.search('.*class .*\{', line):
+                    if re.search('.*class .*\{', line) or re.search('.* public class.*', line) or re.search('.* private class .*', line):
                         words = line.split(' ')
                         for i in range(0, len(words)):
                             word = words[i]
@@ -244,8 +245,25 @@ class AnalysisManager:
         plt.title("Git Links below 20. Count:" + str(g.number_of_edges()))
         self.drawGraph(g)
 
-    def createCodeAndGitPlot(self, plt):
+    def createGit20PlusLinksPlot(self, plt):
         plt.figure(5)
+        g = nx.Graph()
+
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                a, b, git_list = classItem.getGitLinks()
+                for related in git_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+
+        g = self.clearNodesWithoutEdges(g)
+        plt.title("Git Links above 20. Count:" + str(g.number_of_edges()))
+        self.drawGraph(g)
+
+    def createCodeAndGitPlot(self, plt):
+        plt.figure(6)
         g = nx.Graph()
         try:
             for classItem in self.structureManager.getClassList():
@@ -286,8 +304,10 @@ class AnalysisManager:
         plt.savefig(self.workingDir + "\~results\\fig3", dpi=100)
         self.createGit20LinksPlot(plt)
         plt.savefig(self.workingDir + "\~results\\fig4", dpi=100)
-        self.createCodeAndGitPlot(plt)
+        self.createGit20PlusLinksPlot(plt)
         plt.savefig(self.workingDir + "\~results\\fig5", dpi=100)
+        self.createCodeAndGitPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig6", dpi=100)
         plt.show()
 
 
