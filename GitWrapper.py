@@ -97,24 +97,26 @@ class GitWrapper:
         os.chdir(self.repo_path)
 
         self.createFolders()
-
-        if not repo.bare:
-            print('Repo at '+self.repo_path+' successfully loaded.')
-            # self.print_repository(repo)
-            commits = list(repo.iter_commits('master'))[:2500]
-            print('Number of commits : {}'.format(len(commits)))
-            nr = 0
-            printNr = 0
-            for commit in commits:
-                parent = commit.parents[0] if commit.parents else EMPTY_TREE_SHA
-                self.getDeletedFiles(commit, parent)
-                nrOfFilesChanged = self.getNrOfChangedFiles(commit, parent)
-                if nrOfFilesChanged >= 1:
-                    os.system("git diff "+parent.hexsha+" "+commit.hexsha+" > "+self.repo_path+"\~diffs\diff"+str(nr)+"_FilesChanged_"+str(nrOfFilesChanged)+".txt")
-                    nr += 1
-                printNr += 1
-                print(printNr)
-        else:
-            print('Could not load repository at ' + self.repo_path + '.')
+        try :
+            if not repo.bare:
+                print('Repo at '+self.repo_path+' successfully loaded.')
+                # self.print_repository(repo)
+                commits = list(repo.iter_commits('prettyfaces3'))[:2500]
+                print('Number of commits : {}'.format(len(commits)))
+                nr = 0
+                printNr = 0
+                for commit in commits:
+                    parent = commit.parents[0] if commit.parents else EMPTY_TREE_SHA
+                    #self.getDeletedFiles(commit, parent)
+                    nrOfFilesChanged = self.getNrOfChangedFiles(commit, parent)
+                    if nrOfFilesChanged >= 1:
+                        os.system("git diff "+parent.hexsha+" "+commit.hexsha+" > "+self.repo_path+"\~diffs\diff"+str(nr)+"_FilesChanged_"+str(nrOfFilesChanged)+".txt")
+                        nr += 1
+                    printNr += 1
+                    print(printNr)
+            else:
+                print('Could not load repository at ' + self.repo_path + '.')
+        except BaseException as e :
+            print(e)
 
         os.chdir(current_dir)
