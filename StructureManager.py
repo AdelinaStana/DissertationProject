@@ -3,10 +3,12 @@ from ClassModel import ClassModel
 from AttributeModel import AttributeModel
 from MethodModel import MethodModel
 
+
 class StructureManager:
-    def __init__(self, parent=None):
+    def __init__(self, workingDir):
         self.classlist = []
         self.linksCount = {}
+        self.workingDir = workingDir + "\~results"
 
     def saveToXml(self):
         data = ET.Element('data')
@@ -72,7 +74,7 @@ class StructureManager:
         # create xml
         try:
             mydata = ET.tostring(data)
-            myfile = open("E:\items.xml", "w+")
+            myfile = open(self.workingDir+"\items.xml", "w+")
             myfile.write(mydata.decode("utf-8"))
         except BaseException as e:
             print(e)
