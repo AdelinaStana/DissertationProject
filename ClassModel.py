@@ -11,7 +11,7 @@ class ClassModel():
         self.git_links_below20 = []
         self.git_links_more = []
         self.relation_list = []
-        self.ignore_list = ['int', 'float', 'String', 'long', 'boolean','TreeNode', ]
+        self.ignore_list = ['int', 'float', 'String', 'long', 'boolean', 'char', 'List', 'StringBuilder', 'double', 'ArrayList', 'Thread', 'Iterator']
 
     def setGitLinks(self, links, nrOfCommits):
         for link in links:
