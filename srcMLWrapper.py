@@ -146,18 +146,22 @@ class srcMLWrapper:
                 return self.getNamespaceRoot(root)
         return root
 
-
     def getClassModelJava(self, file, root):
         classList = []
 
+        if root.find("{http://www.srcML.org/srcML/src}block"):
+            root = root.find("{http://www.srcML.org/srcML/src}block")
+
         for item in root.findall("{http://www.srcML.org/srcML/src}class"):
+            className = self.getName(item)
             insideClassList = self.getClassModelJava(file, item)
+
             if insideClassList:
                 classList.extend(insideClassList)
-            classModel = ClassModel()
 
+            classModel = ClassModel()
             classModel.setFile(file)
-            classModel.setName(self.getName(item))
+            classModel.setName(className)
             classModel.setSuperClass(self.getItemName(item, "super"))
 
             block = self.getItem(item, 'block')
