@@ -3,17 +3,25 @@ from ClassModel import *
 from AttributeModel import *
 from MethodModel import *
 import os
+import shutil
+import time
 import xml.etree.ElementTree as ET
+
 
 class srcMLWrapper:
     def __init__(self, workingDir):
         self.workingDir = workingDir+"\~Temp"
         if not os.path.isdir(self.workingDir):
             os.mkdir(self.workingDir)
+        else:
+            shutil.rmtree(self.workingDir)
+            os.mkdir(self.workingDir)
 
     def convertFiles(self, file):
             file_name = os.path.basename(file)
             file_xml = self.workingDir + "/"+file_name + ".xml"
+            if os.path.isfile(file_xml):
+                file_xml = self.workingDir + "/"+file_name+str(int(round(time.time() * 1000))) + ".xml"
             cmd = "srcml \""+file+"\" -o \""+file_xml+"\""
 
             rez = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
