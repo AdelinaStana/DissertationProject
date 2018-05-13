@@ -65,7 +65,7 @@ class ClassModel():
 
     def getMatch(self):
         git_links = self.getGitLinksTotal()
-        return set(self.relation_list) & set(git_links)
+        return set(self.relation_list).intersection(git_links)
 
     def setRelated(self, rellist):
         self.relation_list = rellist

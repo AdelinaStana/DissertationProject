@@ -1,0 +1,108 @@
+\documentclass[conference,compsoc]{IEEEtran}
+
+\ifCLASSOPTIONcompsoc
+
+  \usepackage[nocompress]{cite}
+\else
+  \usepackage{cite}
+\fi
+
+\usepackage{graphicx}
+\graphicspath{ {E:/faculta/Master/images/} }
+
+\ifCLASSINFOpdf
+  
+\else
+ 
+\fi
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+
+\title{An empirical study on the interplay between structural and logical\\ dependencies of software systems classes 
+}
+
+
+\author{\IEEEauthorblockN{Stana Adelina Diana}
+\IEEEauthorblockA{Computer Science and Engineering Department\\
+"Politehnica" University of Timisoara }
+\and
+\IEEEauthorblockN{Ioana Sora}
+\IEEEauthorblockA{Computer Science and Engineering Department\\
+"Politehnica" University of Timisoara }}
+
+\maketitle
+
+\begin{abstract}
+Software systems are continuously in change. This changing process is never finished as long as the software system is used, changes can be triggered by new features , defects, new technologies, system refactoring for maintainability.\\ Software maintenance can be made during the development process by maintaining the already implemented features while developing new ones or at the end of the development process when the system is no longer open to new features requested by the client and the maintenance is only made for the existing ones. \\From an architectural point of view, a system is stable when a change in one component of the system does not affect the other components .This rule applies recursively also inside the components. The ideal situation will be to be able to make a change in one part without changing parts that are in a dependency relation with that part. Those dependencies affect the maintainability of the system and increase the realization effort of any problem that appears during the maintenance time.\\Studying only the structural dependencies of the system is not enough to get a clear overview of the system dependencies. For more precise results a study that combines structural dependencies and logical dependencies is needed. We have analysed 20 open-source software systems of different sizes to investigate the links between structural dependencies and logical dependencies.
+\end{abstract}
+
+\IEEEpeerreviewmaketitle
+
+
+
+\section{Introduction}
+During the development process of a software system new classes and new methods to the existing classes are added in order to fulfill new functionalities. All of the adding actions from above have a direct impact on the system structural dependencies. Structural dependencies are dependencies that result following the source code analysis of the system. The source code is any static, textual, human readable, fully executable description of a computer program that can be compiled automatically into an executable form\cite{ct1} .\\ On the other hand logical dependencies also can be added during the development process. Logical dependencies refer to those depencencies between entities that are not always visible through source code analysis (Figure \ref{fig:fig1}). \\Logical dependencies can be easily extracted from the versioning system (e.g. Subversion , Git) commits. When building the logical dependencies we have not taken into consideration classes that co-change only by comment changes. For a change to be taken into consideration in creation a new logical link it had to involve code change.  In this paper we intend to understand better the intersection between structural dependencies and logical dependencies and it's impact over the system (Figure \ref{fig:fig2}). 
+\begin{figure}
+\includegraphics[scale=0.45]{fig1.png}
+\caption{Relationships between structural and logical dependencies }
+\label{fig:fig1}
+\end{figure}
+\begin{figure}
+\includegraphics[scale=0.35]{fig2.png}
+\caption{Venn Diagram showing the intersection between structural and logical dependencies }
+\label{fig:fig2}
+\end{figure}
+\section{Software dependencies}
+ A dependency is created by two elements that are in a relationship and indicates that an element of the relationship, in some manner, depends on the other element of the relationship. In this case, if one of these elements changes, there could be an impact to the other \cite{ct2}. Dependencies are discovered by analysis of source code or from an intermediate representation such as abstract syntax trees.\cite{ct3}\\ \\ In the next subsections we introduce the notion of structural dependencies and how it can be identified trough the source code of the system and the notion of logical dependencies and how it can be idenfied trough the commits from the versioning system.
+
+\subsection{ Structural dependencies}
+Structural dependencies (a.k.a syntactic dependencies or structural coupling) are the result of source code analysis. Each source code file can contain one or more classes. \\There are several types of relationships between source code entities, a method can call another class method, a class extends another class, all those create dependencies between classes \cite{ct4}.\\ Even though in some of the cases if class A depends on class B , changes in class B can produce changes in class A, but not the other way around \cite{ct5} . There are other cases in which if class A depends on class B,  changes in class B can produce changes in class A and viceversa if we are speaking in the context of a new feature implementation that implies changing return types and adding new methods.So we will consider structural dependencies as bidirectional relationship, "class A depends on class B" and "class B depends on class A". \\The choosing of building bidirectional relationships is also motivated by the fact that we cannot establish for the moment the direction of the logical dependencies of the system. So in order to have a omogeninty between the logical and structural dependencies analysis results, we will take both of the relationships types as bidirectional. 
+
+\subsection{ Logical dependencies}
+Co-evolution is a terminology used in biology to indicate change in the genetic composition of one species in response to a genetic change in another \cite{ct5}. \\In software engineering, co-evolution represents the phenomenon through one component changes in response to a change in another component. Those changes can be found in the software history. \cite{ct6}\\  Logical dependencies (a.k.a logical coupling) are the result of software history analysis and can reveal relationships that are not present in the source code code (structural depencencies). If class A depends only on class B  and class D has no structural connection with class A and B but each time class D changes also class A changes then class A and D have a logical relationship. Not all the relationships that result from software history analysis are not included in the structural analysis relationships, most likely if class A depends on class B then during the evolution of the system class A and class B will change together  (Figure \ref{fig:fig3}) .
+
+\begin{figure}
+\includegraphics[scale=0.65]{fig3.png}
+\caption{Co-evolution and logical dependencies}
+\label{fig:fig3}
+\end{figure}
+
+\section{Study setup}
+
+\section{Conclusion}
+None 
+
+
+\ifCLASSOPTIONcompsoc
+  \section*{Acknowledgments}
+\else
+  \section*{Acknowledgment}
+\fi
+
+
+The author would like to thank 
+
+
+
+\begin{thebibliography}{1}
+
+\bibitem{ct1}
+David Binkley, \emph{Source Code Analysis: A Road Map}, Future of Software Engineering(FOSE'07), 2007.
+\bibitem{ct2}
+G. Booch, \emph{Object-Oriented Analysis and Design with Applications}, Third Edition: Addison-Wesley, 2007.
+\bibitem{ct3}
+Marcelo Cataldo, Audris Mockus, Jeffrey A. Roberts, and James D. Herbsleb, \emph{Software Dependencies, Work Dependencies, and Their Impact on Failures},  IEEE Transactions on Software Engineering ( Volume: 35, Issue: 6, Nov.-Dec. 2009 ).
+\bibitem{ct4}
+Beck F., Diehl S.,\emph{ On the congruence of modularity and code coupling. In: Proceedings of the 19th ACM SIGSOFT symposium and the 13th European conference on Foundations of software engineering}, 2011.
+\bibitem{ct5}
+Liguo Yu,\emph{Understanding component co-evolution with a study on Linux}, 2007.
+\bibitem{ct6}
+Igor Wiese, Rodrigo Kuroda, Reginaldo Re, Gustavo Oliva, Marco Gerosa, \emph{An Empirical Study of the Relation Between Strong Change Coupling and Defects Using History and Social Metrics in the Apache Aries Project}, 2015.
+\end{thebibliography}
+
+\end{document}
+
+

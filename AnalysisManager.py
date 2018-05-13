@@ -20,7 +20,6 @@ class AnalysisManager:
         self.structureManager = StructureManager(self.workingDir)
         self.srcMLWrapper = srcMLWrapper(self.workingDir)
 
-
     def setWorkingDir(self, directory):
         if os.path.isdir(directory):
             self.workingDir = directory
