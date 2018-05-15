@@ -48,6 +48,7 @@ class AnalysisManager:
         self.getDeletedFilesXML()
 
     def convertToXML(self):
+        self.convertedFilesList = []
         for file in self.filesList:
             if not re.search('\.xml', file):
                 returnVal, pathToFile = self.srcMLWrapper.convertFiles(file)
@@ -58,8 +59,10 @@ class AnalysisManager:
                 break
 
     def setXMLFilesList(self, filesDir):
-        for file in os.listdir(filesDir):
-            self.convertedFilesList.append(filesDir+"//"+file)
+        self.convertedFilesList = []
+        for r, d, f in os.walk(filesDir):
+            for file in f:
+                self.convertedFilesList.append(os.path.join(r, file))
 
 
     def loadStructureFromXML(self, file):
@@ -69,77 +72,59 @@ class AnalysisManager:
     def setFilesList(self, filesList):
         self.filesList = filesList
 
-    '''    def buldGitModel(self):
-        for file in os.listdir(self.workingDir+"//~diffs"):
-            datafile = open(self.workingDir+"//~diffs//"+file, 'r+')
-            file = file.replace('.txt', '')
-            nrOfCommitsStr = file.split('FilesChanged_')[1]
-            nrOfCommits = int(nrOfCommitsStr)
-            git_link_list = []
-            classLine = ""
-            foundLineComment = False
-            foundMultiLineComment = False
-            foundClass = False
-            try:
-                for line in datafile:
-                    if re.search('\'\'\'', line) and not foundMultiLineComment:
-                        foundMultiLineComment = True
-                    elif re.search('\'\'\'', line) and foundMultiLineComment:
-                        foundMultiLineComment = False
-                    elif re.search('\\\\', line):
-                        foundLineComment = True
-                    else:
-                        foundLineComment = False
+    def removeComments(self, string):
+        string = re.sub(re.compile("/\*.*?\*/", re.DOTALL), "",
+                        string)  # remove all occurance streamed comments (/*COMMENT */) from string
+        string = re.sub(re.compile("//.*?\n"), "",
+                        string)  # remove all occurance singleline comments (//COMMENT\n ) from string
+        return string
 
-                    if foundClass and not foundMultiLineComment and not foundLineComment:
-                        words = classLine.split(' ')
-                        for i in range(0, len(words)):
-                            word = words[i]
-                            if word == 'class' and words[i+1] not in git_link_list:
-                                git_link_list.append(words[i+1])
-                        foundClass = False
-
-                    if re.search('.*class .*\{', line):
-                        classLine = line
-                        foundClass = True
-            except BaseException as e:
-                print(e)
-
-            if len(git_link_list) > 1:
-                for className in git_link_list:
-                    self.structureManager.setGitLinksToClass(className, git_link_list, nrOfCommits)
-'''
+    def removeGitSimbols(self, string):
+        string = string.replace('+', '')
+        string = string.replace('-', '')
+        return string
 
     def buldGitModel(self):
         for file in os.listdir(self.workingDir+"//~diffs"):
-            datafile = open(self.workingDir+"//~diffs//"+file, 'r+')
-            file = file.replace('.txt', '')
-            nrOfCommitsStr = file.split('FilesChanged_')[1]
-            nrOfCommits = int(nrOfCommitsStr)
-            git_link_list = []
             try:
-                for line in datafile:
-                    if re.search('.*::.*\{', line):
+                datafile = open(self.workingDir+"//~diffs//"+file, 'r+', encoding="utf8", errors='ignore').read()
+                datafile = self.removeComments(datafile)
+                datafile = self.removeGitSimbols(datafile)
+                file = file.replace('.txt', '')
+                nrOfCommitsStr = file.split('FilesChanged_')[1]
+                nrOfCommits = int(nrOfCommitsStr)
+                git_link_list = []
+                tempList = datafile.split('\n')
+                listOfLines = []
+                for line in tempList:
+                    if line.strip() != '':
+                        listOfLines.append(line)
+                for index in range(0, len(listOfLines)-1):
+                    line = listOfLines[index]
+                    '''if re.search('.*::.*\{', line):
                         words = line.split(' ')
                         for i in range(0, len(words)):
                             word = words[i]
                             if re.search('.*::.*', word):
                                 name = word.split('::')
                                 if name not in git_link_list:
-                                    git_link_list.append(name[0])
+                                    git_link_list.append(name[0])'''
 
                     if re.search('.*class .*\{', line) or re.search('.* public class.*', line) or re.search('.* private class .*', line):
                         words = line.split(' ')
                         for i in range(0, len(words)):
                             word = words[i].strip()
                             if word == 'class' and words[i + 1].strip() not in git_link_list:
-                                git_link_list.append(words[i + 1].strip())
+                                if listOfLines[index+1].strip() != '}':
+                                    git_link_list.append(words[i + 1].strip())
+                                else:
+                                    print("________________"+file)
+
+                if len(git_link_list) > 1:
+                    for className in git_link_list:
+                        self.structureManager.setGitLinksToClass(className, git_link_list, nrOfCommits)
             except BaseException as e:
                 print(e)
-
-            if len(git_link_list) > 1:
-                for className in git_link_list:
-                    self.structureManager.setGitLinksToClass(className, git_link_list, nrOfCommits)
 
     def processData(self):
         for file in self.convertedFilesList:
@@ -148,10 +133,11 @@ class AnalysisManager:
                 classList = self.srcMLWrapper.getClassModel(file)
                 for classStructure in classList:
                     #classStructure.printDetails(self.parent)
-                    classStructure.buildRelated()
                     self.structureManager.addClass(classStructure)
             except BaseException as e:
                 print(e)
+
+        self.structureManager.buildRelated()
 
         self.buldGitModel()
         self.structureManager.saveToXml()
@@ -204,8 +190,9 @@ class AnalysisManager:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
-
+        print("Number of classes: " + str(g.number_of_nodes()))
         plt.title("Code Links. Count: " + str(g.number_of_edges()))
+        print(g.number_of_edges())
         self.drawGraph(g)
 
     def createGit5LinksPlot(self, plt):
@@ -223,6 +210,7 @@ class AnalysisManager:
 
         g = self.clearNodesWithoutEdges(g)
         plt.title("Git Links below 5. Count: " + str(g.number_of_edges()))
+        print(g.number_of_edges())
         self.drawGraph(g)
 
     def createGit20LinksPlot(self, plt):
@@ -240,6 +228,7 @@ class AnalysisManager:
 
         g = self.clearNodesWithoutEdges(g)
         plt.title("Git Links below 20. Count:" + str(g.number_of_edges()))
+        print(g.number_of_edges())
         self.drawGraph(g)
 
     def createGit20PlusLinksPlot(self, plt):
@@ -257,6 +246,7 @@ class AnalysisManager:
 
         g = self.clearNodesWithoutEdges(g)
         plt.title("Git Links above 20. Count:" + str(g.number_of_edges()))
+        print(g.number_of_edges())
         self.drawGraph(g)
 
     def createGitLinksPlot(self, plt):
@@ -274,6 +264,7 @@ class AnalysisManager:
 
         g = self.clearNodesWithoutEdges(g)
         plt.title("Git Links. Count:" + str(g.number_of_edges()))
+        print(g.number_of_edges())
         self.drawGraph(g)
 
     def createCodeAndGitPlot(self, plt):
@@ -289,12 +280,63 @@ class AnalysisManager:
             print(e)
         self.clearNodesWithoutEdges(g)
 
-        plt.title("Code+Git Links. Count: " + str(g.number_of_edges()))
+        plt.title("Code+Git Links Total. Count: " + str(g.number_of_edges()))
+        print(g.number_of_edges())
+        self.drawGraph(g)
+
+    def createCodeAndGitPlot5(self, plt):
+        plt.figure(7)
+        g = nx.Graph()
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                related_list = classItem.getMatch5()
+                for related in related_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+        self.clearNodesWithoutEdges(g)
+
+        plt.title("Code+Git Links < 5. Count: " + str(g.number_of_edges()))
+        print(g.number_of_edges())
+        self.drawGraph(g)
+
+    def createCodeAndGitPlot20(self, plt):
+        plt.figure(8)
+        g = nx.Graph()
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                related_list = classItem.getMatch20()
+                for related in related_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+        self.clearNodesWithoutEdges(g)
+
+        plt.title("Code+Git Links >5 <20. Count: " + str(g.number_of_edges()))
+        print(g.number_of_edges())
+        self.drawGraph(g)
+
+    def createCodeAndGitPlot20Plus(self, plt):
+        plt.figure(9)
+        g = nx.Graph()
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                related_list = classItem.getMatch20plus()
+                for related in related_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+        self.clearNodesWithoutEdges(g)
+
+        plt.title("Code+Git Links 20 plus. Count: " + str(g.number_of_edges()))
+        print(g.number_of_edges())
         self.drawGraph(g)
 
     def buildModel(self):
         import matplotlib.pyplot as plt
-        print("Number of classes: "+str(len(self.structureManager.getClassList())))
         self.createCodeLinksPlot(plt)
         plt.savefig(self.workingDir + "\~results\\fig1", dpi=100)
         self.createGit5LinksPlot(plt)
@@ -307,6 +349,12 @@ class AnalysisManager:
         plt.savefig(self.workingDir + "\~results\\fig5", dpi=100)
         self.createCodeAndGitPlot(plt)
         plt.savefig(self.workingDir + "\~results\\fig6", dpi=100)
+        self.createCodeAndGitPlot5(plt)
+        plt.savefig(self.workingDir + "\~results\\fig7", dpi=100)
+        self.createCodeAndGitPlot20(plt)
+        plt.savefig(self.workingDir + "\~results\\fig8", dpi=100)
+        self.createCodeAndGitPlot20Plus(plt)
+        plt.savefig(self.workingDir + "\~results\\fig9", dpi=100)
         plt.show()
 
 

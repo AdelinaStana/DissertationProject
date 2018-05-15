@@ -6,8 +6,6 @@ from TitleBar import TitleBar
 from AnalysisManager import AnalysisManager
 from CheckableDirModel import CheckableDirModel
 
-from os import listdir
-from os.path import isfile, join
 
 import os
 
@@ -191,11 +189,11 @@ class Dialog(QMainWindow):
         self.printLine("Total number of files loaded : {}".format(total))
 
     def processFilesClicked(self):
-        #self.analysisManager.setXMLFilesList(self.model.rootDir+"//~Temp")
+        self.analysisManager.setXMLFilesList(self.model.rootDir+"/~Temp/")
         self.printLine("Converting to XML .......")
-        self.analysisManager.convertToXML()
+        #self.analysisManager.convertToXML()
         self.printLine("Getting commits .......")
-        self.analysisManager.getGitCommits()
+        #self.analysisManager.getGitCommits()
         self.printLine("Building model .......")
         self.analysisManager.processData()
         self.analysisManager.buildModel()

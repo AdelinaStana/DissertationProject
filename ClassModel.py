@@ -11,7 +11,6 @@ class ClassModel():
         self.git_links_below20 = []
         self.git_links_more = []
         self.relation_list = []
-        self.ignore_list = ['int', 'float', 'String', 'long', 'boolean', 'char', 'List', 'StringBuilder', 'double', 'ArrayList', 'Thread', 'Iterator']
 
     def setGitLinks(self, links, nrOfCommits):
         for link in links:
@@ -67,13 +66,22 @@ class ClassModel():
         git_links = self.getGitLinksTotal()
         return set(self.relation_list).intersection(git_links)
 
+    def getMatch5(self):
+        return set(self.relation_list).intersection(self.git_links_below5)
+
+    def getMatch20(self):
+        return set(self.relation_list).intersection(self.git_links_below20)
+
+    def getMatch20plus(self):
+        return set(self.relation_list).intersection(self.git_links_more)
+
     def setRelated(self, rellist):
         self.relation_list = rellist
 
     def getRelated(self):
         return self.relation_list
 
-    def buildRelated(self):
+    def buildRelated(self, classNamesList):
         self.relation_list = []
         for method in self.methods:
             for arg in method.getArgs():
@@ -85,7 +93,9 @@ class ClassModel():
         if self.superclass != "None":
             self.relation_list.append(self.superclass)
 
-        self.relation_list = [x for x in self.relation_list if x not in self.ignore_list]
+        self.relation_list = [x for x in self.relation_list if x in classNamesList]
+
+        return self
 
     def printDetails(self, UIObj):
         UIObj.printLine("________________________________")

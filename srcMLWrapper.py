@@ -13,9 +13,9 @@ class srcMLWrapper:
         self.workingDir = workingDir+"\~Temp"
         if not os.path.isdir(self.workingDir):
             os.mkdir(self.workingDir)
-        else:
+        '''else:
             shutil.rmtree(self.workingDir)
-            os.mkdir(self.workingDir)
+            os.mkdir(self.workingDir)'''
 
     def convertFiles(self, file):
             file_name = os.path.basename(file)

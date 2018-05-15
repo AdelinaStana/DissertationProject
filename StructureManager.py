@@ -7,6 +7,7 @@ from MethodModel import MethodModel
 class StructureManager:
     def __init__(self, workingDir):
         self.classlist = []
+        self.classlistNames = []
         self.linksCount = {}
         self.workingDir = workingDir + "\~results"
 
@@ -166,6 +167,7 @@ class StructureManager:
 
     def addClass(self, classStruct):
         self.classlist.append(classStruct)
+        self.classlistNames.append(classStruct.getName())
 
     def getClassList(self):
         return self.classlist
@@ -173,8 +175,8 @@ class StructureManager:
     def getRelated(self, className):
         try:
             return self.linksCount[className]
-        except BaseException:
-            return 0
+        except BaseException as e:
+            print(e)
 
     def setGitLinksToClass(self, className, links, nrOfCommits):
         flag = False
@@ -185,11 +187,10 @@ class StructureManager:
                     classStruct.setGitLinks(links, nrOfCommits)
             if not flag:
                 print("Class: " + className+" not found!")
-        except BaseException:
-            return 0
+        except BaseException as e:
+            print(e)
 
-    def buildRelated(self):
-
+    def buildRelated_(self):
         for item in self.classlist:
             className = item.name
             counter = 0
@@ -203,4 +204,8 @@ class StructureManager:
                         counter += 1
 
             self.linksCount[className] = counter
+
+    def buildRelated(self):
+        for item in self.classlist:
+            item = item.buildRelated(self.classlistNames)
 
