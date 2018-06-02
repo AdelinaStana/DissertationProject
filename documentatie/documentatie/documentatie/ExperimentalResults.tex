@@ -1,6 +1,6 @@
 
 \chapter{Experimental results}
-In this study, we have made a set of statistical analysis on a set of open-source projects in order to extract the structural and logical dependencies between classes \cite{ct5}, \cite{ct8} . Table \ref{table:1} illustrates all the systems studied. The 1st column shows the projects IDs; 2nd column shows the project name; 3rd column shows the number of classes extracted; 4th column shows the number of commits from the main branch of each project and the 5th shows the language in which the project was developed.
+In this study, we have made a set of statistical analysis on a set of open-source projects in order to extract the structural and logical dependencies between classes \cite{ct5}, \cite{ct8} . Table \ref{table:1} illustrates all the systems studied. The 1st column shows the projects IDs; 2nd column shows the project name; 3rd column shows the number of classes extracted; 4th column shows the number of commits from the main branch of each project and the 5th shows the language in which the project was developed.\\
 
 \begin{table}[h]
   \centering
@@ -39,8 +39,7 @@ In this study, we have made a set of statistical analysis on a set of open-sourc
   \begin{tabular}{@{}cccccc@{}}
     \toprule
     ID  & SD & LD+comments & Overlaps & LD-comments & Overlaps    \\
-    \midrule
-  &\multicolumn{5}{c}{Commits with less than 5 files changed}\\
+  &\multicolumn{5}{c}{Fasting Value}\\
     \midrule
  \ch{1}	&	48	&	59	&	15	&	49	&	12	\\
  \ch{2}	&	3	&	6	&	3	&	6	&	3	\\
@@ -62,8 +61,17 @@ In this study, we have made a set of statistical analysis on a set of open-sourc
 \ch{18}	&	296	&	866	&	41	&	835	&	37	\\
 \ch{19}	&	42	&	94,00	&	5,00	&	89,00	&	3,00	\\
     \bottomrule
-   &\multicolumn{5}{c}{ Commits with more than 5  and less than 20 files changed}\\
- \midrule
+  \end{tabular}
+  \caption{Results for commits with less than 5 files changed}
+   \label{table:2}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{@{}cccccc@{}}
+    \toprule
+    ID  & SD & LD+comm. & Overlaps & LD-comm. & Overlaps    \\
+    \midrule
  \ch{1}	&	48	&	259	&	23	&	232	&	12	\\
  \ch{2}	&	3	&	0	&	0	&	0	&	3	\\
  \ch{3}	&	5	&	107	&	2	&	104	&	2	\\
@@ -83,10 +91,20 @@ In this study, we have made a set of statistical analysis on a set of open-sourc
 \ch{17}	&	566	&	3105	&	160	&	2609	&	204	\\
 \ch{18}	&	296	&	2035	&	36	&	2021	&	32	\\
 \ch{19}	&	42	&	336,00	&	0,00	&	327,00	&	0,00	\\
-
     \bottomrule
-  &\multicolumn{5}{c}{ Commits with more than 20 files changed}\\
- \midrule
+  \end{tabular}
+  \caption{Results for commits with more than 5  and less than 20 files changed}
+   \label{table:3}
+\end{table}
+
+Table \ref{table:3}, illustrates results for commits with more than 5  and less than 20 files changed.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{@{}cccccc@{}}
+    \toprule
+   ID  & SD & LD+comm. & Overlaps & LD-comm. & Overlaps    \\
+    \midrule
  \ch{1}	&	48	&	190	&	17	&	105	&	16	\\
  \ch{2}	&	3	&	0	&	0	&	0	&	0	\\
  \ch{3}	&	5	&	0	&	0	&	0	&	0	\\
@@ -108,12 +126,9 @@ In this study, we have made a set of statistical analysis on a set of open-sourc
 \ch{19}	&	42	&	522,00	&	7,00	&	941,00	&	7,00	\\
     \bottomrule
   \end{tabular}
-  \caption{Results for dependencies overlaps.}
-   \label{table:2}
+  \caption{Results for commits with more than 20 files changed}
+   \label{table:4}
 \end{table}
-
-
-Table \ref{table:2}, illustrates results for the categories mentioned in subsection 2.2. The 1st column shows the projects IDs; 2nd column shows the number of structural dependencies; 3rd column shows the number logical dependencies found with comments taken into consideration as change; 4th column shows the number of logical dependencies found in col. 3 that are also structural dependencies; 5th column shows logical dependencies found without taking into consideration comments as change; finally the 6th column shows the number of logical dependencies found in col.5 that are also structural dependencies.
 
 
 \begin{table}[h]
@@ -149,6 +164,11 @@ Table \ref{table:2}, illustrates results for the categories mentioned in subsect
    \label{table:5}
 \end{table}
 
+
+
+Table \ref{table:4}, illustrates results for the categories mentioned in subsection 2.2. The 1st column shows the projects IDs; 2nd column shows the number of structural dependencies; 3rd column shows the number logical dependencies found with comments taken into consideration as change; 4th column shows the number of logical dependencies found in col. 3 that are also structural dependencies; 5th column shows logical dependencies found without taking into consideration comments as change; finally the 6th column shows the number of logical dependencies found in col.5 that are also structural dependencies.\\
+
+
 \begin{table}[h]
   \centering
   \begin{tabular}{@{}cccccc@{}}
@@ -182,4 +202,4 @@ Table \ref{table:2}, illustrates results for the categories mentioned in subsect
    \label{table:6}
 \end{table}
 
-Table \ref{table:5} and \ref{table:6} illustrates results in percentage, reported to the structural dependencies, of the analysis for all the systems when logical dependencies where build with/ without comments taken into consideration as change.The 1st column shows the projects IDs;2nd column shows the overlaping procentage between logical and structural dependencies for commits with less then 5 files changed; 3rd shows the overlaping procentage between logical and structural dependencies for commits with more then 5 and less then 20 files changed; 4th column shows the overlaping procentage between logical dependencies and structural dependencies for commits with more then 20 files changed; 5th column shows the overlaping procentage between logical and structural dependencies for all commits regardless of the number of files (this percentage is not always the sum of the other ones since logical dependencies are taken as unique and one logical dependency can be found in many categories);
+Table \ref{table:5} and \ref{table:6} illustrates results in percentage, reported to the structural dependencies, of the analysis for all the systems when logical dependencies where build with/ without comments taken into consideration as change.The 1st column shows the projects IDs;2nd column shows the overlaping procentage between logical and structural dependencies for commits with less then 5 files changed; 3rd shows the overlaping procentage between logical and structural dependencies for commits with more then 5 and less then 20 files changed; 4th column shows the overlaping procentage between logical dependencies and structural dependencies for commits with more then 20 files changed; 5th column shows the overlaping procentage between logical and structural dependencies for all commits regardless of the number of files (this percentage is not always the sum of the other ones since logical dependencies are taken as unique and one logical dependency can be found in many categories);\\

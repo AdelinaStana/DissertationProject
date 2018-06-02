@@ -11,6 +11,7 @@ import os
 
 
 class Dialog(QMainWindow):
+
     def __init__(self, app, exePath=None, parent=None):
         super(QMainWindow, self).__init__(parent)
 

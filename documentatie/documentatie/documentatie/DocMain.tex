@@ -5,6 +5,22 @@
 \usepackage{graphicx}
 \usepackage{booktabs, chemformula}
 \usepackage{titlesec, blindtext, color}
+\usepackage{listings}
+
+\usepackage{xcolor} % for setting colors
+
+% set the default code style
+\lstset{
+basicstyle=\fontsize{9}{11}\ttfamily,
+    frame=tb, % draw a frame at the top and bottom of the code block
+    tabsize=4, % tab space width
+    showstringspaces=false, % don't mark spaces in strings
+    numbers=left, % display line numbers on the left
+    commentstyle=\color{green}, % comment color
+    keywordstyle=\color{blue}, % keyword color
+    stringstyle=\color{red} % string color
+}
+
 \newcommand\tab[1][1cm]{\hspace*{#1}}
 
  \geometry{
@@ -45,7 +61,7 @@ bindingoffset=0.0in
 
 \include{ExperimentalResults}
 
-\chapter{Conclusions}
+\include{Conclusions}
 
 
 \begin{thebibliography}{1}
@@ -70,10 +86,20 @@ Liguo Yu,\emph{Understanding component co-evolution with a study on Linux}, Empi
  Huzefa Kagdi, Malcom Gethers, Denys Poshyvanyk, Michael L. Collard,\emph{Blending Conceptual and Evolutionary Couplings to Support Change Impact Analysis in Source Code}, 17th Working Conference on IEEE, 2010, pp. 119-128.
 \bibitem{ct10}
 Poshyvanyk, Denys, \emph{Using information retrieval based coupling measures for impact analysis}, Empirical Software Engineering 14 ,2008, pp. 5-32.
+\bibitem{ct11}
+Arisholm E, Briand LC, Foyen A \emph{Dynamic coupling measurement for object-oriented software.}, 2004, IEEE Trans Softw Eng 30(8):491–506.
 \bibitem{srcml1}
 Collard, M. L., Kagdi, H., and Maletic, J. I., \emph{An XML-Based Lightweight C++ Fact Extractor}, IEEE International Workshop on Program Comprehension (IWPC'03), Portland, OR, May 10-11 2003, pp. 134-143
 \bibitem{srcml2}
 Collard, M.L., Decker, M., Maletic, J. I.,  \emph{Lightweight Transformation and Fact Extraction with the srcML Toolkit}, IEEE International Working Conference on Source Code Analysis and Manipulation (SCAM'11), 2011, pp. 173-184.
+\bibitem{python}
+Kuhlman Dave, \emph{A Python Book: Beginning Python, Advanced Python, and Python Exercises.}, 2009, pp. 12-13.
+\bibitem{oopconcept}
+ K. B. Bruce, \emph{ Foundations of Object-Oriented Languages.} The MIT Press, Cambridge, MA, 2002, pp. 18-20.
+\bibitem{oop2}
+Gilbert, Stephen, Bill McCarty. \emph{Object-Oriented Design in Java.} The Waite Group, 1998, pp. 34-46.
+
+
 \end{thebibliography}
 
 
