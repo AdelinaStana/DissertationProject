@@ -9,7 +9,7 @@ class StructureManager:
         self.classlist = []
         self.classlistNames = []
         self.linksCount = {}
-        self.workingDir = workingDir + "\~results2"
+        self.workingDir = workingDir + "\~results"
 
     def saveToXml(self):
         data = ET.Element('data')

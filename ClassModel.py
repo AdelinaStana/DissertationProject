@@ -36,7 +36,7 @@ class ClassModel():
 
     def getOccurrencesGitLinksTotal(self):
         links = self.getGitLinksTotal()
-        return [item for item in links if links.count(item) > 3]
+        return [item for item in links if links.count(item) > 1]
 
     def getGitLinksTotal(self):
         gitLinks = []

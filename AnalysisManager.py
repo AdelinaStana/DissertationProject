@@ -25,10 +25,10 @@ class AnalysisManager:
         if os.path.isdir(directory):
             self.workingDir = directory
             try:
-                os.mkdir(self.workingDir + "\~results2")
+                os.mkdir(self.workingDir + "\~results")
             except BaseException:
-                shutil.rmtree(self.workingDir + "\~results2")
-                os.mkdir(self.workingDir + "\~results2")
+                shutil.rmtree(self.workingDir + "\~results")
+                os.mkdir(self.workingDir + "\~results")
 
             self.srcMLWrapper = srcMLWrapper(self.workingDir)
             self.structureManager = StructureManager(self.workingDir)
@@ -89,7 +89,7 @@ class AnalysisManager:
         for file in os.listdir(self.workingDir+"//~diffs"):
             try:
                 datafile = open(self.workingDir+"//~diffs//"+file, 'r+', encoding="utf8", errors='ignore').read()
-                datafile = self.removeComments(datafile)
+                #datafile = self.removeComments(datafile)
                 datafile = self.removeGitSimbols(datafile)
                 file = file.replace('.txt', '')
                 nrOfCommitsStr = file.split('FilesChanged_')[1]
@@ -102,14 +102,14 @@ class AnalysisManager:
                         listOfLines.append(line)
                 for index in range(0, len(listOfLines)-1):
                     line = listOfLines[index]
-                    '''if re.search('.*::.*\{', line):
+                    if re.search('.*::.*\{', line):
                         words = line.split(' ')
                         for i in range(0, len(words)):
                             word = words[i]
                             if re.search('.*::.*', word):
                                 name = word.split('::')
                                 if name not in git_link_list:
-                                    git_link_list.append(name[0])'''
+                                    git_link_list.append(name[0])
 
                     if re.search('.*class .*\{', line) or re.search('.* public class.*', line) or re.search('.* private class .*', line):
                         words = line.split(' ')

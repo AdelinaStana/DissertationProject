@@ -1,5 +1,20 @@
 \chapter{Theoretical aspects}
 
+\section {State of the art}
+
+\tab During the development process of a software system new classes and new methods to the existing classes are added in order to fulﬁll new functionalities. All of the adding actions from above have a direct impact on the system structural dependencies. Those are the result of the source code analysis of the system. \\The source code is any static, textual, human readable, fully executable description of a computer program that can be compiled automatically into an executable form \cite{ct1}.\\On the other hand logical dependencies also can be added during the development process. Logical dependencies refer to those depencencies between entities that are not always visible through source code analysis. Logical dependencies can be easily extracted from the versioning system (e.g. Subversion , Git) commits.  (Figure \ref{fig:fig1}).
+
+\tab The ideal situation presumes that changes in one part can be made without changing parts that are in a dependency relation with that part. Those dependencies aﬀect the maintainability of the system and increase the realization eﬀort of any problem that appears during the maintenance time. Studying only the structural dependencies of the system is not enough to get a clear overview of the system dependencies. For more precise results is needed a study that combines structural dependencies and logical dependencies. \\ We have analysed 19 open-source software systems of diﬀerent sizes to investigate the links between structural dependencies and logical dependencies. 
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.60]{fig1.png}
+\caption{Relationships between structural and logical dependencies }
+\label{fig:fig1}
+\centering
+\end{figure}
+
 \section{Software dependencies}
 \tab A dependency is created by two elements that are in a relationship and indicates that an element of the relationship, in some manner, depends on the other element of the relationship. In this case, if one of these elements change, there could be an impact to the other \cite{ct2}. Dependencies are discovered by analysis of source code or from an intermediate representation such as abstract syntax trees \cite{ct3} .
 
@@ -77,16 +92,21 @@ At a basic level, developers could retain multiple copies of the different versi
 \subsection{Definition}
 
 \tab  In software engineering, we use co-evolution to represent the phenomenon in software evolution that change in one component C2 in response to a change in another component C1 \cite{ct5}, \cite{ct6}, \cite{ct8}. 
-There are differences between co-evolution and evolutionary coupling.\\ Co-evolution is the result of cause–effect changes between two components: changes to one component require changes to another component. On the other hand, evolutionary coupling is based on the evolution history of two components and is a measurement of the observation that two components are changed at the same time.\\  Modiﬁcations made to two components at the same commit do not necessarily indicate the co-evolution of the two. These modiﬁcations could be completely unrelated.\\ So, evolutionary coupling could also be determend accidentally by two components changing in the same commit and it will bring noise to the measurement of evolutionary coupling.  \cite{ct5} \\ We will try to filter that noise by setting different thresholds in the process of analysing the systems.
+There are differences between co-evolution and evolutionary coupling.\\
+\tab Co-evolution is the result of cause–effect changes between two components: changes to one component require changes to another component. On the other hand, evolutionary coupling is based on the evolution history of two components and is a measurement of the observation that two components are changed at the same time.\\ 
+\tab  Modifications made to two components at the same commit do not necessarily indicate the co-evolution of the two. These modiﬁcations could be completely unrelated.\\ So, evolutionary coupling could also be determend accidentally by two components changing in the same commit and it will bring noise to the measurement of evolutionary coupling.  \cite{ct5} \\ We will try to filter that noise by setting different thresholds in the process of analysing the systems.
 
-\tab The versioning system contains the long-term change history of every file. Each project change made by an individual at certain point of time is contained into a commit \cite{ct7}.\\ 
-All the commits are stored in the versioning system cronologicaly and each commit has a parent. The parent commit is the baseline from which development began, the only exeption to this rule is the first commit which has no parent. We will take into consideration only \textit{commits that have a parent} since the first commit can include source code files that are already in development (migration from one versioning system to another) and this can introduce reduntant logical links \cite{ct8} .
-\\ The tool looks through the main branch of the project and gets all the existing commits, for each commit a diff against the parent will be made and stored.\\ Finally after all the differences files are stored , all the files are parsed and logical dependencies are build. In addition , the number of files changed in a commit can influence the logical dependencies. A relatively big number of files changed can indicate a merge of all changes from another branch as a single commit. This can lead to a number of logical dependencies that are redundant since the files are not actualy changing in the same time.The logical dependencies are splitted into three categories :\\ \\
+\tab The versioning system contains the long-term change history of every file. Each project change made by an individual at certain point of time is contained into a commit \cite{ct7}.All the commits are stored in the versioning system cronologicaly and each commit has a parent. The parent commit is the baseline from which development began, the only exeption to this rule is the first commit which has no parent. We will take into consideration only \textit{commits that have a parent} since the first commit can include source code files that are already in development (migration from one versioning system to another) and this can introduce reduntant logical links \cite{ct8} .\\
+
+\tab The number of files changed in a commit can influence the logical dependencies. A relatively big number of files changed can indicate a merge of all changes from another branch as a single commit or a folder renaming. This can lead to a number of logical dependencies that are redundant since the files are not actualy changing in the same time.The logical dependencies are splitted into three categories :\\ \\
 \textit{\textbf{Category 1:} Dependencies found in commits with less than 5 source code files changed.}\\
 \textit{\textbf{Category 2:} Dependencies found in commits with more than 5 files changed but less than 20. }\\
 \textit{\textbf{Category 3:} Dependencies found in commits with more than 20 files.}\\
 
-Also for each category two dependencies analysis will be made:
+\tab Also, files that changed only by comments change can lead to redundant logical dependencies. If class A and class B change together but the only change was a change in the comments then there may not be any logical dependency between them. 
+For each category mentioned above, two dependencies analysis will be made:
 \textit{\textbf{A:} Considering comments  as valid changes.}
 \textit{\textbf{B:} Considering comments  as redundant changes. }
-In the second case if class A and class B change together but the only change found is a comment change then between class A and B will not be set logical dependency.
+In the second case if class A and class B change together but the only change found is a comment change then between class A and B will not be set a logical dependency.\\
+
+\tab Another filtering method that can lead to a more accurate results is to count the occurrences of the logical dependencies. If class A and class B change together but only once during all the commits from the active branch the class A and B may or may not represent a logical dependency.
