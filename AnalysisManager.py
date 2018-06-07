@@ -207,7 +207,7 @@ class AnalysisManager:
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                git_list, b, c = classItem.getGitLinks()
+                git_list = classItem.getGit5Links()
                 for related in git_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
@@ -216,23 +216,38 @@ class AnalysisManager:
         g = self.clearNodesWithoutEdges(g)
         plt.title("Git Links below 5. Count: " + str(g.number_of_edges()))
         self.resultsText += str(g.number_of_edges())+","
+
         #######################################################################3
         g = nx.Graph()
 
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                git_list = classItem.getOccurencesBelow5()
+                git_list = classItem.getOccurencesBelow5(2)
                 for related in git_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
 
-        g = self.clearNodesWithoutEdges(g)
         self.resultsText += str(g.number_of_edges()) + ","
-        self.drawGraph(g)
 
-    def createGit20LinksPlot(self, plt):
+        #######################################################################3
+        g = nx.Graph()
+
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                git_list = classItem.getOccurencesBelow5(3)
+                for related in git_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+
+        self.resultsText += str(g.number_of_edges()) + ","
+
+        #self.drawGraph(g)
+
+    def createGit10LinksPlot(self, plt):
         print(".")
         plt.figure(3)
         g = nx.Graph()
@@ -240,7 +255,7 @@ class AnalysisManager:
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                a, git_list, c = classItem.getGitLinks()
+                git_list = classItem.getGit10Links()
                 for related in git_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
@@ -255,18 +270,31 @@ class AnalysisManager:
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                git_list = classItem.getOccurencesBelow20()
+                git_list = classItem.getOccurencesBelow10(2)
                 for related in git_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
 
-        g = self.clearNodesWithoutEdges(g)
         self.resultsText += str(g.number_of_edges())+","
+
+        #########################################################################
+        g = nx.Graph()
+
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                git_list = classItem.getOccurencesBelow10(3)
+                for related in git_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+
+        self.resultsText += str(g.number_of_edges()) + ","
 
         #self.drawGraph(g)
 
-    def createGit20PlusLinksPlot(self, plt):
+    def createGit20LinksPlot(self, plt):
         print(".")
         plt.figure(4)
         g = nx.Graph()
@@ -274,7 +302,7 @@ class AnalysisManager:
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                a, b, git_list = classItem.getGitLinks()
+                git_list = classItem.getGit20Links()
                 for related in git_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
@@ -283,24 +311,38 @@ class AnalysisManager:
         g = self.clearNodesWithoutEdges(g)
         plt.title("Git Links above 20. Count:" + str(g.number_of_edges()))
         self.resultsText += str(g.number_of_edges())+","
+
         #############################################################################
         g = nx.Graph()
 
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                git_list = classItem.getOccurencesMore()
+                git_list = classItem.getOccurencesBelow20(2)
                 for related in git_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
 
-        g = self.clearNodesWithoutEdges(g)
+        self.resultsText += str(g.number_of_edges())+","
+
+        #############################################################################
+        g = nx.Graph()
+
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                git_list = classItem.getOccurencesBelow20(3)
+                for related in git_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+
         self.resultsText += str(g.number_of_edges())+","
 
         #self.drawGraph(g)
 
-    def createGitLinksPlot(self, plt):
+    def createGitTotalLinksPlot(self, plt):
         print(".")
         plt.figure(5)
         g = nx.Graph()
@@ -323,26 +365,39 @@ class AnalysisManager:
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                git_list = classItem.getOccurrencesGitLinksTotal()
+                git_list = classItem.getOccurrencesTotal(2)
                 for related in git_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
 
-        g = self.clearNodesWithoutEdges(g)
+        self.resultsText += str(g.number_of_edges())+","
+
+        ###########################################################################
+        g = nx.Graph()
+
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                git_list = classItem.getOccurrencesTotal(3)
+                for related in git_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+
         self.resultsText += str(g.number_of_edges())+","
 
 
         #self.drawGraph(g)
 
-    def createCodeAndGitPlot(self, plt):
+    def createCodeAndTotalGitPlot(self, plt):
         print(".")
         plt.figure(6)
         g = nx.Graph()
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                related_list = classItem.getMatch()
+                related_list = classItem.getMatchTotal()
                 for related in related_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
@@ -358,14 +413,27 @@ class AnalysisManager:
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                related_list = classItem.getMatchOcc()
+                related_list = classItem.getMatchOccTotal(2)
                 for related in related_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
-        self.clearNodesWithoutEdges(g)
 
         self.resultsText += str(g.number_of_edges())+","
+
+        ################################################################
+
+        g = nx.Graph()
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                related_list = classItem.getMatchOccTotal(3)
+                for related in related_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+
+        self.resultsText += str(g.number_of_edges()) + ","
 
         #self.drawGraph(g)
 
@@ -392,19 +460,83 @@ class AnalysisManager:
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                related_list = classItem.getMatch5Occ()
+                related_list = classItem.getMatch5Occ(2)
+                for related in related_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+
+        self.resultsText += str(g.number_of_edges())+","
+
+        ######################################################################
+
+        g = nx.Graph()
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                related_list = classItem.getMatch5Occ(3)
+                for related in related_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+
+        self.resultsText += str(g.number_of_edges()) + ","
+
+
+        #self.drawGraph(g)
+
+    def createCodeAndGitPlot10(self, plt):
+        print(".")
+        plt.figure(8)
+        g = nx.Graph()
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                related_list = classItem.getMatch10()
                 for related in related_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
         self.clearNodesWithoutEdges(g)
+
+        plt.title("Code+Git Links <= 10. Count: " + str(g.number_of_edges()))
+        self.resultsText += str(g.number_of_edges())+","
+
+        ###################################################################
+
+        g = nx.Graph()
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                related_list = classItem.getMatch10Occ(2)
+                for related in related_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+        self.clearNodesWithoutEdges(g)
+
+        self.resultsText += str(g.number_of_edges())+","
+
+        ###################################################################
+
+        g = nx.Graph()
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                related_list = classItem.getMatch10Occ(3)
+                for related in related_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
+        self.clearNodesWithoutEdges(g)
+
         self.resultsText += str(g.number_of_edges())+","
 
         #self.drawGraph(g)
 
     def createCodeAndGitPlot20(self, plt):
         print(".")
-        plt.figure(8)
+        plt.figure(9)
         g = nx.Graph()
         try:
             for classItem in self.structureManager.getClassList():
@@ -416,40 +548,7 @@ class AnalysisManager:
             print(e)
         self.clearNodesWithoutEdges(g)
 
-        plt.title("Code+Git Links >5 <20. Count: " + str(g.number_of_edges()))
-        self.resultsText += str(g.number_of_edges())+","
-        ###################################################################
-
-        g = nx.Graph()
-        try:
-            for classItem in self.structureManager.getClassList():
-                g.add_node(classItem.name)
-                related_list = classItem.getMatch20Occ()
-                for related in related_list:
-                    g.add_edge(classItem.name, related)
-        except BaseException as e:
-            print(e)
-        self.clearNodesWithoutEdges(g)
-
-        self.resultsText += str(g.number_of_edges())+","
-
-        #self.drawGraph(g)
-
-    def createCodeAndGitPlot20Plus(self, plt):
-        print(".")
-        plt.figure(9)
-        g = nx.Graph()
-        try:
-            for classItem in self.structureManager.getClassList():
-                g.add_node(classItem.name)
-                related_list = classItem.getMatch20plus()
-                for related in related_list:
-                    g.add_edge(classItem.name, related)
-        except BaseException as e:
-            print(e)
-        self.clearNodesWithoutEdges(g)
-
-        plt.title("Code+Git Links 20 plus. Count: " + str(g.number_of_edges()))
+        plt.title("Code+Git Links <= 20. Count: " + str(g.number_of_edges()))
         self.resultsText += str(g.number_of_edges())+","
 
         #############################################################3
@@ -458,12 +557,25 @@ class AnalysisManager:
         try:
             for classItem in self.structureManager.getClassList():
                 g.add_node(classItem.name)
-                related_list = classItem.getMatch20plusOcc()
+                related_list = classItem.getMatch20Occ(2)
                 for related in related_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
-        self.clearNodesWithoutEdges(g)
+
+        self.resultsText += str(g.number_of_edges())+","
+
+        #############################################################3
+
+        g = nx.Graph()
+        try:
+            for classItem in self.structureManager.getClassList():
+                g.add_node(classItem.name)
+                related_list = classItem.getMatch20Occ(3)
+                for related in related_list:
+                    g.add_edge(classItem.name, related)
+        except BaseException as e:
+            print(e)
 
         self.resultsText += str(g.number_of_edges())+","
 
@@ -473,27 +585,44 @@ class AnalysisManager:
         import matplotlib.pyplot as plt
         try:
             self.createCodeLinksPlot(plt)
-            #plt.savefig(self.workingDir + "\~results\\fig1", dpi=100)
             self.createGit5LinksPlot(plt)
-            #plt.savefig(self.workingDir + "\~results\\fig2", dpi=100)
+            self.createGit10LinksPlot(plt)
             self.createGit20LinksPlot(plt)
-            #plt.savefig(self.workingDir + "\~results\\fig3", dpi=100)
-            self.createGit20PlusLinksPlot(plt)
-            #plt.savefig(self.workingDir + "\~results\\fig4", dpi=100)
-            self.createGitLinksPlot(plt)
-            #plt.savefig(self.workingDir + "\~results\\fig5", dpi=100)
-            self.createCodeAndGitPlot(plt)
-            #plt.savefig(self.workingDir + "\~results\\fig6", dpi=100)
+            self.createGitTotalLinksPlot(plt)
             self.createCodeAndGitPlot5(plt)
-            #plt.savefig(self.workingDir + "\~results\\fig7", dpi=100)
+            self.createCodeAndGitPlot10(plt)
             self.createCodeAndGitPlot20(plt)
-            #plt.savefig(self.workingDir + "\~results\\fig8", dpi=100)
-            self.createCodeAndGitPlot20Plus(plt)
-            #plt.savefig(self.workingDir + "\~results\\fig9", dpi=100)
-            #plt.show()
+            self.createCodeAndTotalGitPlot(plt)
 
             print(self.resultsText)
         except BaseException as e:
             print(e)
 
+'''
+def buildModel(self):
+    import matplotlib.pyplot as plt
+    try:
+        self.createCodeLinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig1", dpi=100)
+        self.createGit5LinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig2", dpi=100)
+        self.createGit10LinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig3", dpi=100)
+        self.createGit20PlusLinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig4", dpi=100)
+        self.createGitTotalLinksPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig5", dpi=100)
+        self.createCodeAndGitPlot(plt)
+        plt.savefig(self.workingDir + "\~results\\fig6", dpi=100)
+        self.createCodeAndGitPlot5(plt)
+        plt.savefig(self.workingDir + "\~results\\fig7", dpi=100)
+        self.createCodeAndGitPlot20(plt)
+        plt.savefig(self.workingDir + "\~results\\fig8", dpi=100)
+        self.createCodeAndGitPlot20Plus(plt)
+        plt.savefig(self.workingDir + "\~results\\fig9", dpi=100)
+        plt.show()
+
+        print(self.resultsText)
+    except BaseException as e:
+        print(e)'''
 

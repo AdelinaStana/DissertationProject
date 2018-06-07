@@ -53,17 +53,20 @@ class StructureManager:
                         attribCall = ET.SubElement(local, 'calls')
                         attribCall.text = str(attribItem.getCalls())
 
-                gitLinks5, gitLinks20, gitLinks50 = classItem.getGitLinks()
                 gitLinksElement = ET.SubElement(classElement, 'gitlinksbelow5')
-                gitList = ",".join(gitLinks5)
+                gitList = ",".join(classItem.getGit5Links())
                 gitLinksElement.text = gitList
 
-                gitLinksElement = ET.SubElement(classElement, 'gitlinksmore5below20')
-                gitList = ",".join(gitLinks20)
+                gitLinksElement = ET.SubElement(classElement, 'gitlinkbelow10')
+                gitList = ",".join(classItem.getGit10Links())
                 gitLinksElement.text = gitList
 
-                gitLinksElement = ET.SubElement(classElement, 'gitlinksmore20')
-                gitList = ",".join(gitLinks50)
+                gitLinksElement = ET.SubElement(classElement, 'gitlinkbelow20')
+                gitList = ",".join(classItem.getGit20Links())
+                gitLinksElement.text = gitList
+
+                gitLinksElement = ET.SubElement(classElement, 'gitlinktotal')
+                gitList = ",".join(classItem.getGitLinksTotal())
                 gitLinksElement.text = gitList
 
                 codeRelatedElement = ET.SubElement(classElement, 'codelinks')
@@ -132,15 +135,19 @@ class StructureManager:
 
                 gitLinks5 = self.getItemTextByName(item, "gitlinksbelow5")
                 if gitLinks5:
-                    classModel.setGitLinks(gitLinks5.split(','),5)
+                    classModel.git_links_below5 = gitLinks5.split(',')
 
-                gitLinks20 = self.getItemTextByName(item, "gitlinksmore5below20")
+                gitLinks10 = self.getItemTextByName(item, "gitlinkbelow10")
+                if gitLinks10:
+                    classModel.git_links_below10 = gitLinks10.split(',')
+
+                gitLinks20 = self.getItemTextByName(item, "gitlinkbelow20")
                 if gitLinks20:
-                    classModel.setGitLinks(gitLinks20.split(','), 20)
+                    classModel.git_links_below20 = gitLinks20.split(',')
 
-                gitLinks = self.getItemTextByName(item, "gitlinksmore20")
-                if gitLinks:
-                    classModel.setGitLinks(gitLinks.split(','), 50)
+                gitLinksTotal = self.getItemTextByName(item, "gitlinktotal")
+                if gitLinks20:
+                    classModel.git_links_total = gitLinksTotal.split(',')
 
                 codeLinks = self.getItemTextByName(item, "codelinks")
                 if codeLinks:
