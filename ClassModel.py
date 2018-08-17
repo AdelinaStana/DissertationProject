@@ -72,6 +72,24 @@ class ClassModel():
 
         return self
 
+    def buildGit(self, classNamesList):
+        git5 = self.git_links_below5
+        git10 = self.git_links_below10
+        git20 = self.git_links_below20
+        gitt = self.git_links_total
+
+        self.git_links_below5 = []
+        self.git_links_below10 = []
+        self.git_links_below20 = []
+        self.git_links_total = []
+
+        self.git_links_below5 = [x for x in git5 if x in classNamesList]
+        self.git_links_below10 = [x for x in git10 if x in classNamesList]
+        self.git_links_below20 = [x for x in git20 if x in classNamesList]
+        self.git_links_total = [x for x in gitt if x in classNamesList]
+
+        return self
+
     def printDetails(self, UIObj):
         UIObj.printLine("________________________________")
         UIObj.printLine("Class name: " + self.name)

@@ -49,7 +49,7 @@ class CheckableDirModel(QDirModel):
 
         return QDirModel.setData(self, index, value, role)
 
-    def exportChecked(self, acceptedSuffix=['cpp', 'h', 'cc','c++','java']):
+    def exportChecked(self, acceptedSuffix=['cpp', 'h', 'cc','c++','java','cs']):
         selection=  set()
         for index in self.checks.keys():
             if self.checks[index] == QtCore.Qt.Checked:

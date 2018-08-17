@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from ClassModel import ClassModel
 from AttributeModel import AttributeModel
 from MethodModel import MethodModel
-
+import os
 
 class StructureManager:
     def __init__(self, workingDir):
@@ -10,6 +10,8 @@ class StructureManager:
         self.classlistNames = []
         self.linksCount = {}
         self.workingDir = workingDir + "\~results"
+        if not os.path.isdir(self.workingDir):
+            os.mkdir(self.workingDir)
 
     def saveToXml(self):
         data = ET.Element('data')
@@ -78,7 +80,7 @@ class StructureManager:
         # create xml
         try:
             mydata = ET.tostring(data)
-            myfile = open(self.workingDir+"\items.xml", "w+")
+            myfile = open(self.workingDir+"\items_comm4.xml", "w+")
             myfile.write(mydata.decode("utf-8"))
         except BaseException as e:
             print(e)
@@ -215,4 +217,10 @@ class StructureManager:
     def buildRelated(self):
         for item in self.classlist:
             item = item.buildRelated(self.classlistNames)
+
+    def buildGit(self):
+        for classItem in self.classlist:
+            self.classlistNames.append(classItem.getName())
+        for item in self.classlist:
+            item = item.buildGit(self.classlistNames)
 
