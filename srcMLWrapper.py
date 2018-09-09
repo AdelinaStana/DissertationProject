@@ -3,14 +3,13 @@ from ClassModel import *
 from AttributeModel import *
 from MethodModel import *
 import os
-import shutil
-import time
 import xml.etree.ElementTree as ET
 
 
 class srcMLWrapper:
-    def __init__(self, workingDir):
-        self.workingDir = workingDir+"\~Temp"
+    def __init__(self, rootDir):
+        self.rootDir = rootDir
+        self.workingDir = rootDir+"/~Temp/"
         if not os.path.isdir(self.workingDir):
             os.mkdir(self.workingDir)
         '''else:
@@ -18,12 +17,12 @@ class srcMLWrapper:
             os.mkdir(self.workingDir)'''
 
     def convertFiles(self, file):
-            file_name = os.path.basename(file)
-            file_xml = self.workingDir + "/"+file_name + ".xml"
-            if os.path.isfile(file_xml):
-                file_xml = self.workingDir + "/"+file_name+str(int(round(time.time() * 1000))) + ".xml"
+            file_path = file.replace(self.rootDir, self.workingDir)
+            file_xml = file_path+".xml"
+            dir_path = os.path.dirname(file_xml)
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path)
             cmd = "srcml \""+file+"\" -o \""+file_xml+"\""
-
             rez = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
             if rez:
                 rez = "Converting "+file+" ...................\n"+str(rez)
@@ -168,7 +167,10 @@ class srcMLWrapper:
                 classList.extend(insideClassList)
 
             classModel = ClassModel()
-            classModel.setFile(file)
+            file_path = file.replace(self.workingDir, 'a/')
+            file_path = file_path.replace(".xml", "")
+            file_path = file_path.replace("\\", "/")
+            classModel.setFile(file_path)
             classModel.setName(className)
             classModel.setSuperClass(self.getItemName(item, "super"))
 
@@ -184,7 +186,6 @@ class srcMLWrapper:
                 classModel.addMethod(method)
 
             classList.append(classModel)
-
         return classList
 
     def getClassModelCpp(self, file):
@@ -218,7 +219,6 @@ class srcMLWrapper:
                     classModel.addMethod(method)
 
             classList.append(classModel)
-
         return classList
 
     def getClassModel(self, file):

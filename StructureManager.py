@@ -8,6 +8,7 @@ class StructureManager:
     def __init__(self, workingDir):
         self.classlist = []
         self.classlistNames = []
+        self.classlistFiles = []
         self.linksCount = {}
         self.workingDir = workingDir + "\~results"
         if not os.path.isdir(self.workingDir):
@@ -177,6 +178,7 @@ class StructureManager:
     def addClass(self, classStruct):
         self.classlist.append(classStruct)
         self.classlistNames.append(classStruct.getName())
+        self.classlistFiles.append(classStruct.getFile())
 
     def getClassList(self):
         return self.classlist
@@ -187,32 +189,13 @@ class StructureManager:
         except BaseException as e:
             print(e)
 
-    def setGitLinksToClass(self, className, links, nrOfCommits):
-        flag = False
+    def setGitLinksToClass(self, links, nrOfCommits):
         try:
             for classStruct in self.classlist:
-                if classStruct.getName() == className:
-                    flag = True
+                if classStruct.getName() in links:
                     classStruct.setGitLinks(links, nrOfCommits)
-            if not flag:
-                print("Class: " + className+" not found!")
         except BaseException as e:
             print(e)
-
-    def buildRelated_(self):
-        for item in self.classlist:
-            className = item.name
-            counter = 0
-
-            for other in self.classlist:
-                if other.name != className:
-                    relatedItems = other.getRelated()
-                    print(className+"-------")
-                    print(relatedItems)
-                    if className in relatedItems:
-                        counter += 1
-
-            self.linksCount[className] = counter
 
     def buildRelated(self):
         for item in self.classlist:

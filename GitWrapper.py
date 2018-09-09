@@ -97,7 +97,7 @@ class GitWrapper:
         os.chdir(self.repo_path)
 
         self.createFolders()
-        try :
+        try:
             if not repo.bare:
                 print('Repo at '+self.repo_path+' successfully loaded.')
                 # self.print_repository(repo)
@@ -110,7 +110,7 @@ class GitWrapper:
                     #self.getDeletedFiles(commit, parent)
                     nrOfFilesChanged = self.getNrOfChangedFiles(commit, parent)
                     if nrOfFilesChanged >= 1:
-                        os.system("git diff "+parent.hexsha+" "+commit.hexsha+" > "+self.repo_path+"\~diffs\diff"+str(nr)+"_FilesChanged_"+str(nrOfFilesChanged)+".txt")
+                        os.system("git diff --relative "+parent.hexsha+" "+commit.hexsha+" > "+self.repo_path+"\~diffs\diff"+str(nr)+"_FilesChanged_"+str(nrOfFilesChanged)+".txt")
                         nr += 1
                     printNr += 1
                     print(printNr)

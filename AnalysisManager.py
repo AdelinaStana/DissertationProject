@@ -46,7 +46,7 @@ class AnalysisManager:
         gitWrapper = GitWrapper(self.workingDir)
         gitWrapper.getRepo()
 
-        self.getDeletedFilesXML()
+        #self.getDeletedFilesXML()
 
     def convertToXML(self):
         self.convertedFilesList = []
@@ -89,7 +89,7 @@ class AnalysisManager:
         for file in os.listdir(self.workingDir+"//~diffs"):
             try:
                 datafile = open(self.workingDir+"//~diffs//"+file, 'r+', encoding="utf8", errors='ignore').read()
-                datafile = self.removeComments(datafile)
+                #datafile = self.removeComments(datafile)
                 datafile = self.removeGitSimbols(datafile)
                 file = file.replace('.txt', '')
                 nrOfCommitsStr = file.split('FilesChanged_')[1]
@@ -111,20 +111,31 @@ class AnalysisManager:
                                 if name not in git_link_list:
                                     git_link_list.append(name[0])'''
 
-                    if re.search('.*class .*\{', line) or re.search('.* public class.*', line) or re.search('.* private class .*', line):
-                        words = line.split(' ')
-                        for i in range(0, len(words)):
-                            word = words[i].strip()
-                            if word == 'class' and words[i + 1].strip() not in git_link_list:
-                                if listOfLines[index+1].strip() != '}':
-                                    wordclass = words[i + 1].strip()
-                                    git_link_list.append(wordclass.replace('{',''))
-                                else:
-                                    print("________________"+file)
+                    if re.search('.*class .*', line) or re.search('.*public class .*', line) or re.search('.*private class .*', line):
+                        try:
+                            words = line.split(' ')
+                            for i in range(0, len(words)):
+                                word = words[i].strip()
+                                if word == 'class' and words[i + 1].strip() not in git_link_list:
+                                    if listOfLines[index+1].strip() != '}':
+                                        wordclass = words[i + 1].strip()
+                                        git_link_list.append(wordclass.replace('{', ''))
+                        except BaseException:
+                            print(line)
+
+                    '''if re.search("--- a.*", line):
+                        fileName = line.replace('---', '')
+                        fileName = fileName.strip()
+                        git_link_list.append(fileName)
+
+                    if re.search("\+\+\+ b.*", line):
+                        fileName = line.replace('+++ b', 'a')
+                        fileName = fileName.strip()
+                        if fileName not in git_link_list:
+                            git_link_list.append(fileName)'''
 
                 if len(git_link_list) > 1:
-                    for className in git_link_list:
-                        self.structureManager.setGitLinksToClass(className, git_link_list, nrOfCommits)
+                    self.structureManager.setGitLinksToClass(git_link_list, nrOfCommits)
             except BaseException as e:
                 print(e)
 
@@ -140,8 +151,8 @@ class AnalysisManager:
                 print(e)
 
         self.structureManager.buildRelated()
-
         self.buldGitModel()
+        self.structureManager.buildGit()
         self.structureManager.saveToXml()
 
     def clearNodesWithoutEdges(self, g):
