@@ -192,9 +192,9 @@ class Dialog(QMainWindow):
     def processFilesClicked(self):
         self.analysisManager.setXMLFilesList(self.model.rootDir+"/~Temp/")
         self.printLine("Converting to XML .......")
-        self.analysisManager.convertToXML()
+        #self.analysisManager.convertToXML()
         self.printLine("Getting commits .......")
-        self.analysisManager.getGitCommits()
+        #self.analysisManager.getGitCommits()
         self.printLine("Building model .......")
         self.analysisManager.processData()
         self.analysisManager.buildModel()

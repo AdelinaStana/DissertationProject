@@ -89,6 +89,7 @@ class AnalysisManager:
         print("Start analysing git diffs...")
         for file in os.listdir(self.workingDir+"//~diffs"):
             try:
+                print(file)
                 datafile = open(self.workingDir+"//~diffs//"+file, 'r+', encoding="utf8", errors='ignore').read()
                 #datafile = self.removeComments(datafile)
                 datafile = self.removeGitSimbols(datafile)
