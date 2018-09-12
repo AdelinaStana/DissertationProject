@@ -25,7 +25,7 @@ class StructureManager:
                 superclass = ET.SubElement(classElement, 'superclass')
                 superclass.text = classItem.getSuperClass()
                 classFile = ET.SubElement(classElement, 'file')
-                classFile.text = classItem.getFile()
+                classFile.text = classItem.getFilePath()
 
                 #add attributes
                 attribElement = ET.SubElement(classElement, 'attributes')
@@ -178,7 +178,7 @@ class StructureManager:
     def addClass(self, classStruct):
         self.classlist.append(classStruct)
         self.classlistNames.append(classStruct.getName())
-        self.classlistFiles.append(classStruct.getFile())
+        self.classlistFiles.append(classStruct.getFilePath())
 
     def getClassList(self):
         return self.classlist
@@ -190,10 +190,15 @@ class StructureManager:
             print(e)
 
     def setGitLinksToClass(self, links, nrOfCommits):
+        classLinks = []
+        for classStruct in self.classlist:
+            if classStruct.getFileName() in links:
+                classLinks.append(classStruct.getName())
+
         try:
             for classStruct in self.classlist:
-                if classStruct.getName() in links:
-                    classStruct.setGitLinks(links, nrOfCommits)
+                if classStruct.getName() in classLinks:
+                    classStruct.setGitLinks(classLinks, nrOfCommits)
         except BaseException as e:
             print(e)
 

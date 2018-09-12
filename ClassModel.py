@@ -1,3 +1,4 @@
+import os
 
 class ClassModel():
     def __init__(self, parent=None):
@@ -18,7 +19,7 @@ class ClassModel():
         self.name = name
 
     def setFile(self, file):
-        self.file = file
+        self.file = file.replace('.xml', '')
 
     def setSuperClass(self, name):
         self.superclass = name
@@ -35,8 +36,11 @@ class ClassModel():
     def getName(self):
         return self.name
 
-    def getFile(self):
+    def getFilePath(self):
         return self.file
+
+    def getFileName(self):
+        return os.path.basename(self.file)
 
     def getAttributes(self):
         return self.attributes
