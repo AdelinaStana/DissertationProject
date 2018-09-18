@@ -95,7 +95,7 @@ class AnalysisManager:
                 file = file.replace('.txt', '')
                 nrOfCommitsStr = file.split('FilesChanged_')[1]
                 nrOfCommits = int(nrOfCommitsStr)
-                git_link_list = []
+                git_link_list = set()
                 tempList = datafile.split('\n')
                 listOfLines = []
                 for line in tempList:
@@ -112,7 +112,7 @@ class AnalysisManager:
                                 if name not in git_link_list:
                                     git_link_list.append(name[0])'''
 
-                    '''if re.search('.*class .*', line) or re.search('.*public class .*', line) or re.search('.*private class .*', line):
+                    if re.search('.*class .*', line) or re.search('.*public class .*', line) or re.search('.*private class .*', line):
                         try:
                             words = line.split(' ')
                             for i in range(0, len(words)):
@@ -120,11 +120,11 @@ class AnalysisManager:
                                 if word == 'class' and words[i + 1].strip() not in git_link_list:
                                     if listOfLines[index+1].strip() != '}':
                                         wordclass = words[i + 1].strip()
-                                        git_link_list.append(wordclass.replace('{', ''))
+                                        git_link_list.add(wordclass.replace('{', ''))
                         except BaseException:
-                            print(line)'''
+                            print(line)
 
-                    if re.search("--- a.*", line):
+                    '''if re.search("--- a.*", line):
                         fileName = line.replace('---', '')
                         fileName = fileName.strip()
                         git_link_list.append(os.path.basename(fileName))
@@ -133,7 +133,7 @@ class AnalysisManager:
                         fileName = line.replace('+++ b', 'a')
                         fileName = fileName.strip()
                         if os.path.basename(fileName) not in git_link_list:
-                            git_link_list.append(os.path.basename(fileName))
+                            git_link_list.append(os.path.basename(fileName))'''
 
                 if len(git_link_list) > 1:
                     self.structureManager.setGitLinksToClass(git_link_list, nrOfCommits)
@@ -214,10 +214,11 @@ class AnalysisManager:
 
         try:
             for classItem in self.structureManager.getClassList():
+                className = classItem.name
                 g.add_node(classItem.name)
                 git_list = classItem.getGit5Links()
                 for related in git_list:
-                    g.add_edge(classItem.name, related)
+                    g.add_edge(className, related)
         except BaseException as e:
             print(e)
         self.resultsText += str(g.number_of_edges())+","

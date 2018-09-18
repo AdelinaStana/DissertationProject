@@ -11,7 +11,7 @@ class AttributeModel:
         self.name = name
 
     def addCall(self):
-        self.calls+=1
+        self.calls += 1
 
     def setCalls(self, calls):
         self.calls = calls

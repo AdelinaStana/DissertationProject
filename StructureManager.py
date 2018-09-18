@@ -6,9 +6,9 @@ import os
 
 class StructureManager:
     def __init__(self, workingDir):
-        self.classlist = []
-        self.classlistNames = []
-        self.classlistFiles = []
+        self.classlist = set()
+        self.classlistNames = set()
+        self.classlistFiles = set()
         self.linksCount = {}
         self.workingDir = workingDir + "\~results"
         if not os.path.isdir(self.workingDir):
@@ -156,7 +156,7 @@ class StructureManager:
                 if codeLinks:
                     classModel.setRelated(codeLinks.split(','))
 
-                self.classlist.append(classModel)
+                self.classlist.add(classModel)
         except BaseException as e:
             print(e)
 
@@ -176,9 +176,9 @@ class StructureManager:
             return self.getText(new)
 
     def addClass(self, classStruct):
-        self.classlist.append(classStruct)
-        self.classlistNames.append(classStruct.getName())
-        self.classlistFiles.append(classStruct.getFilePath())
+        self.classlist.add(classStruct)
+        self.classlistNames.add(classStruct.getName())
+        self.classlistFiles.add(classStruct.getFilePath())
 
     def getClassList(self):
         return self.classlist
@@ -190,15 +190,15 @@ class StructureManager:
             print(e)
 
     def setGitLinksToClass(self, links, nrOfCommits):
-        classLinks = []
+        '''classLinks = set()
         for classStruct in self.classlist:
             if classStruct.getFileName() in links:
-                classLinks.append(classStruct.getName())
+                classLinks.add(classStruct.getName())'''
 
         try:
             for classStruct in self.classlist:
-                if classStruct.getName() in classLinks:
-                    classStruct.setGitLinks(classLinks, nrOfCommits)
+                if classStruct.getName() in links:
+                    classStruct.setGitLinks(links, nrOfCommits)
         except BaseException as e:
             print(e)
 
@@ -208,7 +208,7 @@ class StructureManager:
 
     def buildGit(self):
         for classItem in self.classlist:
-            self.classlistNames.append(classItem.getName())
+            self.classlistNames.add(classItem.getName())
         for item in self.classlist:
             item = item.buildGit(self.classlistNames)
 
