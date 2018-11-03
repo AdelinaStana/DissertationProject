@@ -3,7 +3,7 @@ from mysql.connector import errorcode
 from collections import OrderedDict
 
 
-class Database:
+class LinksDB:
     def __init__(self):
         self.cnx = mysql.connector.connect(user='root', password='12345', port=3306)
         self.db_cursor = self.cnx.cursor()
@@ -26,7 +26,6 @@ class Database:
         try:
             self.db_cursor.execute(query1)
             self.db_cursor.fetchall()
-            print(self.db_cursor.rowcount)
         except mysql.connector.Error as err:
             print(err.msg)
 
@@ -54,7 +53,7 @@ class Database:
     def clear_table(self):
         for table_name in self.TABLES:
             try:
-                self.db_cursor.execute("truncate "+table_name)
+                self.db_cursor.execute("DELETE FROM "+table_name)
                 self.cnx.commit()
             except mysql.connector.Error as err:
                 if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:

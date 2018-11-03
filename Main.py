@@ -21,8 +21,7 @@ class Dialog(QMainWindow):
         self.setStyleSheet("""MainWindow { border-radius: 5px; }""")
 
         self.app = app
-        workingDir = os.path.dirname(exePath)
-        self.analysisManager = AnalysisManager(self, workingDir)
+        self.analysisManager = None
         self.show()
         self.maxNormal = False
 
@@ -31,7 +30,6 @@ class Dialog(QMainWindow):
 
         self.titleBar = TitleBar(self)
         self.setMenuBar(self.titleBar)
-
 
         self.model = CheckableDirModel()
         self.tree = QTreeView()
@@ -101,7 +99,6 @@ class Dialog(QMainWindow):
             widget = self.toolbar.widgetForAction(action)
             widget.setFixedSize(70, 70)
 
-
     def mousePressEvent(self, event):
         self.offset = event.pos()
 
@@ -150,25 +147,14 @@ class Dialog(QMainWindow):
     def settingsClicked(self):
         self.clearLayout(self.main_layout)
 
-    '''def loadXmlClicked1(self):
-        dir = str(QFileDialog.getExistingDirectory(self, "Select XML File"))
-
-        filesList = [join(dir, f) for f in listdir(dir) if isfile(join(dir, f))]
-        self.analysisManager.setXMLFilesList(filesList)
-        total = len(filesList)
-        count = 1
-        for file in filesList:
-            self.printLine(file + "\n")
-            self.progressBar.setValue((count * 100) / total)
-            self.progressBar.update()
-            count += 1'''
-
     def loadXmlClicked(self):
         xmlFile = str(QFileDialog.getOpenFileName(self, "Select XML File")[0])
 
         self.progressBar.setValue(0)
         self.printLine("Loading data from XML structure. Please wait ...\n")
         self.progressBar.update()
+        xmlDir = os.path.dirname(xmlFile)
+        self.analysisManager = AnalysisManager(self,xmlDir)
         self.analysisManager.loadStructureFromXML(xmlFile)
         self.progressBar.setValue(100)
         self.progressBar.update()
@@ -176,11 +162,13 @@ class Dialog(QMainWindow):
     def loadFilesClicked(self):
         filenames = self.model.exportChecked()
         repoDir = self.model.rootDir
+        self.analysisManager = AnalysisManager(self, repoDir)
         self.analysisManager.setFilesList(filenames)
-        self.analysisManager.setWorkingDir(repoDir)
         self.printLine("Files loaded:\n")
         total = len(filenames)
         count = 1
+        self.progressBar.setValue(0)
+        self.progressBar.update()
         for file in filenames:
             self.printLine(file+"\n")
             self.progressBar.setValue((count*100)/total)
@@ -195,9 +183,8 @@ class Dialog(QMainWindow):
         #self.analysisManager.convertToXML()
         self.printLine("Getting commits .......")
         #self.analysisManager.getGitCommits()
-        self.printLine("Building model .......")
+        self.printLine("Processing data .......")
         self.analysisManager.processData()
-        self.analysisManager.buildModel()
 
     def printLine(self, text):
         self.app.processEvents()

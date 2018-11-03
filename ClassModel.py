@@ -1,7 +1,7 @@
 import os
 
 
-class ClassModel():
+class ClassModel:
     def __init__(self, parent=None):
         self.parent = parent
         self.superclass = "None"
@@ -128,7 +128,7 @@ class ClassModel():
 
                 self.git_links_total.append(link)
 
-    ############################################################################################################
+    ##########################################################################################################
 
     def getOccurencesBelow5(self, nr):
         return set([item for item in self.git_links_below5 if self.git_links_below5.count(item) >= nr])
@@ -143,7 +143,7 @@ class ClassModel():
         links = self.getGitLinksTotal()
         return [item for item in links if links.count(item) >= nr]
 
-#######################################################################################################################
+    #########################################################################################################
 
     def getGitLinksTotal(self):
         return self.git_links_total
@@ -157,7 +157,7 @@ class ClassModel():
     def getGit20Links(self):
         return set(self.git_links_below20)
 
-#######################################################################################################
+    #######################################################################################################
 
     def getMatch5(self):
         return set(self.relation_list).intersection(self.git_links_below5)
@@ -172,7 +172,7 @@ class ClassModel():
         git_links = self.getGitLinksTotal()
         return set(self.relation_list).intersection(git_links)
 
-    #####################################################################################################3
+    #####################################################################################################
 
     def getMatch5Occ(self, nr_of_occ):
         git_links = self.getOccurencesBelow5(nr_of_occ)

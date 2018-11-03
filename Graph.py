@@ -1,9 +1,9 @@
-from Config import Database
+from LinksDB import LinksDB
 
 
 class Graph:
     def __init__(self):
-        self.db = Database()
+        self.db = LinksDB()
         self.db.connect_database()
         #db.create_table()
         self.nodes = []

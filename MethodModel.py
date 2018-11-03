@@ -1,5 +1,5 @@
 class MethodModel:
-    def __init__(self, parent=None):
+    def __init__(self):
         self.type = "None"
         self.name = "None"
         self.args = []

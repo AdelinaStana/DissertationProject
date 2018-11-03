@@ -4,6 +4,7 @@ from AttributeModel import AttributeModel
 from MethodModel import MethodModel
 import os
 
+
 class StructureManager:
     def __init__(self, workingDir):
         self.classlist = set()
