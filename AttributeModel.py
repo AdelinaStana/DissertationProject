@@ -1,26 +1,26 @@
 class AttributeModel:
-    def __init__(self, parent=None):
+    def __init__(self):
         self.type = "None"
         self.name = "None"
         self.calls = 0
 
-    def setType(self, type):
+    def set_type(self, type):
         self.type = type
 
-    def setName(self, name):
+    def set_name(self, name):
         self.name = name
 
-    def addCall(self):
+    def add_call(self):
         self.calls += 1
 
-    def setCalls(self, calls):
+    def set_calls(self, calls):
         self.calls = calls
 
-    def getType(self):
+    def get_type(self):
         return self.type
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
-    def getCalls(self):
+    def get_calls(self):
         return self.calls

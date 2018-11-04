@@ -3,159 +3,159 @@ from Graph import Graph
 
 class Counter:
     def __init__(self, structureManager):
-        self.resultsText = ""
-        self.structureManager = structureManager
+        self.results_text = ""
+        self.structure_manager = structureManager
 
-    def startCount(self):
+    def start_count(self):
         try:
-            self.countCodeLinks()
-            self.countGit5Links()
-            self.countGit10Links()
-            self.countGit20Links()
-            self.countGitTotalLinks()
-            self.countCodeAndGit5Links()
-            self.countCodeAndGit10Links()
-            self.countCodeAndGit20Links()
-            self.countCodeAndTotalGitLinks()
+            self.count_code_links()
+            self.count_git5_links()
+            self.count_git10_links()
+            self.count_git20_links()
+            self.count_git_total_links()
+            self.count_code_and_git5_links()
+            self.count_code_and_git10_links()
+            self.count_code_and_git20_links()
+            self.count_code_and_total_git_links()
 
-            print(self.resultsText)
-            self.saveResults()
+            print(self.results_text)
+            self.save_results()
         except BaseException as e:
             print(e)
 
-    def saveResults(self):
-        f = open("D:\\results.txt", "a+")
-        f.write(self.resultsText+"\n")
+    def save_results(self):
+        f = open("E:\\results.txt", "a+")
+        f.write(self.results_text + "\n")
 
-    def countCodeLinks(self):
+    def count_code_links(self):
         print(".")
         g = Graph()
         try:
-            for classItem in self.structureManager.getClassList():
+            for classItem in self.structure_manager.get_class_list():
                 g.add_node(classItem.name)
-                related_list = classItem.getRelated()
+                related_list = classItem.get_related()
                 for related in related_list:
                     g.add_edge(classItem.name, related)
         except BaseException as e:
             print(e)
         print("Number of classes: " + str(g.number_of_nodes()) + ",")
-        self.resultsText += str(g.number_of_nodes()) + ","
-        self.resultsText += str(g.number_of_edges()) + ","
+        self.results_text += str(g.number_of_nodes()) + ","
+        self.results_text += str(g.number_of_edges()) + ","
 
-    def countGit5Links(self):
+    def count_git5_links(self):
         print(".")
         for occ in range(1, 5):
             g = Graph()
 
             try:
-                for classItem in self.structureManager.getClassList():
-                    className = classItem.name
-                    g.add_node(classItem.name)
-                    git_list = classItem.getOccurencesBelow5(occ)
+                for class_item in self.structure_manager.get_class_list():
+                    class_name = class_item.name
+                    g.add_node(class_item.name)
+                    git_list = class_item.get_occurrence_below5(occ)
                     for related in git_list:
-                        g.add_edge(className, related)
+                        g.add_edge(class_name, related)
             except BaseException as e:
                 print(e)
-            self.resultsText += str(g.number_of_edges()) + ","
+            self.results_text += str(g.number_of_edges()) + ","
 
-    def countGit10Links(self):
+    def count_git10_links(self):
         print(".")
         for occ in range(1, 5):
             g = Graph()
 
             try:
-                for classItem in self.structureManager.getClassList():
+                for classItem in self.structure_manager.get_class_list():
                     g.add_node(classItem.name)
-                    git_list = classItem.getOccurencesBelow10(occ)
-                    for related in git_list:
-                        g.add_edge(classItem.name, related)
-            except BaseException as e:
-                print(e)
-            self.resultsText += str(g.number_of_edges()) + ","
-
-    def countGit20Links(self):
-        print(".")
-        for occ in range(1, 5):
-
-            g = Graph()
-            try:
-                for classItem in self.structureManager.getClassList():
-                    g.add_node(classItem.name)
-                    git_list = classItem.getOccurencesBelow20(occ)
+                    git_list = classItem.get_occurrence_below10(occ)
                     for related in git_list:
                         g.add_edge(classItem.name, related)
             except BaseException as e:
                 print(e)
-            self.resultsText += str(g.number_of_edges()) + ","
+            self.results_text += str(g.number_of_edges()) + ","
 
-    def countGitTotalLinks(self):
+    def count_git20_links(self):
         print(".")
         for occ in range(1, 5):
+
             g = Graph()
             try:
-                for classItem in self.structureManager.getClassList():
+                for classItem in self.structure_manager.get_class_list():
                     g.add_node(classItem.name)
-                    git_list = classItem.getOccurrencesTotal(occ)
+                    git_list = classItem.get_occurrence_below20(occ)
                     for related in git_list:
                         g.add_edge(classItem.name, related)
             except BaseException as e:
                 print(e)
-            self.resultsText += str(g.number_of_edges()) + ","
+            self.results_text += str(g.number_of_edges()) + ","
 
-    def countCodeAndTotalGitLinks(self):
+    def count_git_total_links(self):
+        print(".")
+        for occ in range(1, 5):
+            g = Graph()
+            try:
+                for classItem in self.structure_manager.get_class_list():
+                    g.add_node(classItem.name)
+                    git_list = classItem.get_occurrences_total(occ)
+                    for related in git_list:
+                        g.add_edge(classItem.name, related)
+            except BaseException as e:
+                print(e)
+            self.results_text += str(g.number_of_edges()) + ","
+
+    def count_code_and_total_git_links(self):
         print(".")
 
         for occ in range(1, 5):
             g = Graph()
             try:
-                for classItem in self.structureManager.getClassList():
+                for classItem in self.structure_manager.get_class_list():
                     g.add_node(classItem.name)
-                    related_list = classItem.getMatchOccTotal(occ)
+                    related_list = classItem.get_match_occ_total(occ)
                     for related in related_list:
                         g.add_edge(classItem.name, related)
             except BaseException as e:
                 print(e)
-            self.resultsText += str(g.number_of_edges()) + ","
+            self.results_text += str(g.number_of_edges()) + ","
 
-    def countCodeAndGit5Links(self):
+    def count_code_and_git5_links(self):
         print(".")
         for occ in range(1, 5):
             g = Graph()
             try:
-                for classItem in self.structureManager.getClassList():
+                for classItem in self.structure_manager.get_class_list():
                     g.add_node(classItem.name)
-                    related_list = classItem.getMatch5Occ(occ)
+                    related_list = classItem.get_match5_occ(occ)
                     for related in related_list:
                         g.add_edge(classItem.name, related)
             except BaseException as e:
                 print(e)
-            self.resultsText += str(g.number_of_edges()) + ","
+            self.results_text += str(g.number_of_edges()) + ","
 
-    def countCodeAndGit10Links(self):
+    def count_code_and_git10_links(self):
         print(".")
         for occ in range(1, 5):
             g = Graph()
             try:
-                for classItem in self.structureManager.getClassList():
+                for classItem in self.structure_manager.get_class_list():
                     g.add_node(classItem.name)
-                    related_list = classItem.getMatch10Occ(occ)
+                    related_list = classItem.get_match10_occ(occ)
                     for related in related_list:
                         g.add_edge(classItem.name, related)
             except BaseException as e:
                 print(e)
-            self.resultsText += str(g.number_of_edges()) + ","
+            self.results_text += str(g.number_of_edges()) + ","
 
-    def countCodeAndGit20Links(self):
+    def count_code_and_git20_links(self):
         print(".")
         for occ in range(1, 5):
             g = Graph()
             try:
-                for classItem in self.structureManager.getClassList():
+                for classItem in self.structure_manager.get_class_list():
                     g.add_node(classItem.name)
-                    related_list = classItem.getMatch20Occ(occ)
+                    related_list = classItem.get_match20_occ(occ)
                     for related in related_list:
                         g.add_edge(classItem.name, related)
             except BaseException as e:
                 print(e)
-            self.resultsText += str(g.number_of_edges()) + ","
+            self.results_text += str(g.number_of_edges()) + ","
 

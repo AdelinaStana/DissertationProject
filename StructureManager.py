@@ -1,215 +1,228 @@
-import xml.etree.ElementTree as ET
 from ClassModel import ClassModel
 from AttributeModel import AttributeModel
 from MethodModel import MethodModel
 import os
+import xml.etree.ElementTree as ET
 
 
 class StructureManager:
-    def __init__(self, workingDir):
-        self.classlist = set()
-        self.classlistNames = set()
-        self.classlistFiles = set()
-        self.linksCount = {}
-        self.workingDir = workingDir + "\~results"
-        if not os.path.isdir(self.workingDir):
-            os.mkdir(self.workingDir)
+    def __init__(self, working_dir):
+        self.class_list = set()
+        self.class_list_names = set()
+        self.class_list_files = set()
+        self.links_count = {}
+        self.working_dir = working_dir + "\~results"
+        if not os.path.isdir(self.working_dir):
+            os.mkdir(self.working_dir)
 
-    def saveToXml(self):
+    def save_to_xml(self):
         data = ET.Element('data')
-        for classItem in self.classlist:
+        for class_item in self.class_list:
             try:
-                classElement = ET.SubElement(data, 'class')
-                #add class details
-                className = ET.SubElement(classElement, 'name')
-                className.text = classItem.getName()
-                superclass = ET.SubElement(classElement, 'superclass')
-                superclass.text = classItem.getSuperClass()
-                classFile = ET.SubElement(classElement, 'file')
-                classFile.text = classItem.getFilePath()
+                class_element = ET.SubElement(data, 'class')
+                # add class details
+                class_name = ET.SubElement(class_element, 'name')
+                class_name.text = class_item.get_name()
+                superclass = ET.SubElement(class_element, 'superclass')
+                superclass.text = class_item.get_super_class()
+                class_file = ET.SubElement(class_element, 'file')
+                class_file.text = class_item.get_file_path()
 
-                #add attributes
-                attribElement = ET.SubElement(classElement, 'attributes')
-                for attribItem in classItem.getAttributes():
-                    attrib = ET.SubElement(attribElement, 'attribute')
-                    attribName = ET.SubElement(attrib, 'name')
-                    attribName.text = attribItem.getName()
-                    attribType = ET.SubElement(attrib, 'type')
-                    attribType.text = attribItem.getType()
-                    attribCall = ET.SubElement(attrib, 'calls')
-                    attribCall.text = attribItem.getCalls()
+                # add attributes
+                attrib_element = ET.SubElement(class_element, 'attributes')
+                for attrib_item in class_item.get_attributes():
+                    attrib = ET.SubElement(attrib_element, 'attribute')
+                    attrib_name = ET.SubElement(attrib, 'name')
+                    attrib_name.text = attrib_item.get_name()
+                    attrib_type = ET.SubElement(attrib, 'type')
+                    attrib_type.text = attrib_item.get_type()
+                    attrib_call = ET.SubElement(attrib, 'calls')
+                    attrib_call.text = attrib_item.get_calls()
 
-                methodElement = ET.SubElement(classElement, 'methods')
-                for methodItem in classItem.getMethods():
-                    method = ET.SubElement(methodElement, 'method')
-                    methodName = ET.SubElement(method, 'name')
-                    methodName.text = methodItem.getName()
-                    methodType = ET.SubElement(method, 'type')
-                    methodType.text = methodItem.getType()
+                method_element = ET.SubElement(class_element, 'methods')
+                for method_item in class_item.get_methods():
+                    method = ET.SubElement(method_element, 'method')
+                    method_name = ET.SubElement(method, 'name')
+                    method_name.text = method_item.get_name()
+                    method_type = ET.SubElement(method, 'type')
+                    method_type.text = method_item.get_type()
 
-                    localsElement = ET.SubElement(method, 'locals')
-                    for attribItem in methodItem.getLocals():
-                        local = ET.SubElement(localsElement, 'attribute')
-                        attribName = ET.SubElement(local, 'name')
-                        attribName.text = attribItem.getName()
-                        attribType = ET.SubElement(local, 'type')
-                        attribType.text = attribItem.getType()
-                        attribCall = ET.SubElement(local, 'calls')
-                        attribCall.text = str(attribItem.getCalls())
+                    locals_element = ET.SubElement(method, 'locals')
+                    for attrib_item in method_item.get_locals():
+                        local = ET.SubElement(locals_element, 'attribute')
+                        attrib_name = ET.SubElement(local, 'name')
+                        attrib_name.text = attrib_item.get_name()
+                        attrib_type = ET.SubElement(local, 'type')
+                        attrib_type.text = attrib_item.get_type()
+                        attrib_call = ET.SubElement(local, 'calls')
+                        attrib_call.text = str(attrib_item.get_calls())
 
-                gitLinksElement = ET.SubElement(classElement, 'gitlinksbelow5')
-                gitList = ",".join(classItem.getGit5Links())
-                gitLinksElement.text = gitList
+                git_links_element = ET.SubElement(class_element,
+                                                  'gitlinksbelow5')
+                git_list = ",".join(class_item.get_git5_links())
+                git_links_element.text = git_list
 
-                gitLinksElement = ET.SubElement(classElement, 'gitlinkbelow10')
-                gitList = ",".join(classItem.getGit10Links())
-                gitLinksElement.text = gitList
+                git_links_element = ET.SubElement(class_element,
+                                                  'gitlinkbelow10')
+                git_list = ",".join(class_item.get_git10_links())
+                git_links_element.text = git_list
 
-                gitLinksElement = ET.SubElement(classElement, 'gitlinkbelow20')
-                gitList = ",".join(classItem.getGit20Links())
-                gitLinksElement.text = gitList
+                git_links_element = ET.SubElement(class_element,
+                                                  'gitlinkbelow20')
+                git_list = ",".join(class_item.get_git20_links())
+                git_links_element.text = git_list
 
-                gitLinksElement = ET.SubElement(classElement, 'gitlinktotal')
-                gitList = ",".join(classItem.getGitLinksTotal())
-                gitLinksElement.text = gitList
+                git_links_element = ET.SubElement(class_element,
+                                                  'gitlinktotal')
+                git_list = ",".join(class_item.get_git_links_total())
+                git_links_element.text = git_list
 
-                codeRelatedElement = ET.SubElement(classElement, 'codelinks')
-                relatedList = ",".join(classItem.getRelated())
-                codeRelatedElement.text = relatedList
+                code_related_element = ET.SubElement(class_element,
+                                                     'codelinks')
+                related_list = ",".join(class_item.get_related())
+                code_related_element.text = related_list
             except BaseException as e:
                 print(e)
 
         # create xml
         try:
-            mydata = ET.tostring(data)
-            myfile = open(self.workingDir+"\items_comm4.xml", "w+")
-            myfile.write(mydata.decode("utf-8"))
+            _data = ET.tostring(data)
+            file = open(self.working_dir + "\items_comm4.xml", "w+")
+            file.write(_data.decode("utf-8"))
         except BaseException as e:
             print(e)
 
     def loadStructure(self, file):
-        import xml.etree.ElementTree as ET
         tree = ET.parse(file)
         root = tree.getroot()
 
         try:
-
             for item in root.findall("class"):
-                classModel = ClassModel()
+                class_model = ClassModel()
 
-                classModel.setFile(self.getItemTextByName(item, "file"))
-                classModel.setName(self.getItemTextByName(item, "name"))
-                classModel.setSuperClass(self.getItemTextByName(item, "super"))
+                class_model.set_file(self.get_item_text_by_name(item, "file"))
+                class_model.set_name(self.get_item_text_by_name(item, "name"))
+                class_model.set_super_class(
+                    self.get_item_text_by_name(item, "super"))
 
-                attributesItem = self.getItemByName(item, "attributes")
-                if attributesItem:
-                    for attrib in attributesItem.findall("attribute"):
-                        attributeModel = AttributeModel()
-                        attributeModel.setType(self.getItemTextByName(attrib, "name"))
-                        attributeModel.setName(self.getItemTextByName(attrib, "type"))
-                        calls = self.getItemTextByName(attrib, "calls")
+                attributes_item = self.get_item_by_name(item, "attributes")
+                if attributes_item:
+                    for attrib in attributes_item.findall("attribute"):
+                        attribute_model = AttributeModel()
+                        attribute_model.set_type(
+                            self.get_item_text_by_name(attrib, "name"))
+                        attribute_model.set_name(
+                            self.get_item_text_by_name(attrib, "type"))
+                        calls = self.get_item_text_by_name(attrib, "calls")
                         if calls is not None:
-                            attributeModel.setCalls(int(calls))
+                            attribute_model.set_calls(int(calls))
                         else:
-                            attributeModel.setCalls(0)
-                        classModel.addAttribute(attributeModel)
+                            attribute_model.set_calls(0)
+                        class_model.add_attribute(attribute_model)
 
-                methodsItem = self.getItemByName(item, "methods")
-                if methodsItem:
-                    for method in methodsItem.findall("method"):
-                        methodModel = MethodModel()
+                methods_item = self.get_item_by_name(item, "methods")
+                if methods_item:
+                    for method in methods_item.findall("method"):
+                        method_model = MethodModel()
 
-                        methodModel.setType(self.getItemTextByName(method, "name"))
-                        methodModel.setName(self.getItemTextByName(method, "type"))
+                        method_model.set_type(
+                            self.get_item_text_by_name(method, "name"))
+                        method_model.set_name(
+                            self.get_item_text_by_name(method, "type"))
 
-                        localsItem = self.getItemByName(method, "locals")
-                        if localsItem:
-                            for attrib in localsItem.findall("attribute"):
-                                attributeModel = AttributeModel()
-                                attributeModel.setType(self.getItemTextByName(attrib, "name"))
-                                attributeModel.setName(self.getItemTextByName(attrib, "type"))
-                                calls = self.getItemTextByName(attrib, "calls")
+                        locals_item = self.get_item_by_name(method, "locals")
+                        if locals_item:
+                            for attrib in locals_item.findall("attribute"):
+                                attribute_model = AttributeModel()
+                                attribute_model.set_type(
+                                    self.get_item_text_by_name(attrib, "name"))
+                                attribute_model.set_name(
+                                    self.get_item_text_by_name(attrib, "type"))
+                                calls = self.get_item_text_by_name(
+                                    attrib, "calls")
                                 if calls is not None:
-                                    attributeModel.setCalls(int(calls))
+                                    attribute_model.set_calls(int(calls))
                                 else:
-                                    attributeModel.setCalls(0)
-                                methodModel.addLocals(attributeModel)
+                                    attribute_model.set_calls(0)
+                                method_model.add_locals(attribute_model)
 
-                        classModel.addMethod(methodModel)
+                        class_model.add_method(method_model)
 
-                gitLinks5 = self.getItemTextByName(item, "gitlinksbelow5")
-                if gitLinks5:
-                    classModel.git_links_below5 = gitLinks5.split(',')
+                git_links5 = self.get_item_text_by_name(item, "gitlinksbelow5")
+                if git_links5:
+                    class_model.git_links_below5 = git_links5.split(',')
 
-                gitLinks10 = self.getItemTextByName(item, "gitlinkbelow10")
-                if gitLinks10:
-                    classModel.git_links_below10 = gitLinks10.split(',')
+                git_links10 = self.get_item_text_by_name(
+                    item, "gitlinkbelow10")
+                if git_links10:
+                    class_model.git_links_below10 = git_links10.split(',')
 
-                gitLinks20 = self.getItemTextByName(item, "gitlinkbelow20")
-                if gitLinks20:
-                    classModel.git_links_below20 = gitLinks20.split(',')
+                git_links20 = self.get_item_text_by_name(
+                    item, "gitlinkbelow20")
+                if git_links20:
+                    class_model.git_links_below20 = git_links20.split(',')
 
-                gitLinksTotal = self.getItemTextByName(item, "gitlinktotal")
-                if gitLinks20:
-                    classModel.git_links_total = gitLinksTotal.split(',')
+                git_links_total = self.get_item_text_by_name(
+                    item, "gitlinktotal")
+                if git_links20:
+                    class_model.git_links_total = git_links_total.split(',')
 
-                codeLinks = self.getItemTextByName(item, "codelinks")
-                if codeLinks:
-                    classModel.setRelated(codeLinks.split(','))
+                code_links = self.get_item_text_by_name(item, "codelinks")
+                if code_links:
+                    class_model.set_related(code_links.split(','))
 
-                self.classlist.add(classModel)
+                self.class_list.add(class_model)
         except BaseException as e:
             print(e)
 
-    def getText(self, atr):
+    def get_text(self, atr):
         if atr is not None:
             text = atr.text
             return text
         else:
             return "None"
 
-    def getItemByName(self, item, name):
-            new = item.find(name)
-            return new
+    def get_item_by_name(self, item, name):
+        new = item.find(name)
+        return new
 
-    def getItemTextByName(self, item, name):
-            new = item.find(name)
-            return self.getText(new)
+    def get_item_text_by_name(self, item, name):
+        new = item.find(name)
+        return self.get_text(new)
 
-    def addClass(self, classStruct):
-        self.classlist.add(classStruct)
-        self.classlistNames.add(classStruct.getName())
-        self.classlistFiles.add(classStruct.getFilePath())
+    def add_class(self, class_struct):
+        self.class_list.add(class_struct)
+        self.class_list_names.add(class_struct.get_name())
+        self.class_list_files.add(class_struct.get_file_path())
 
-    def getClassList(self):
-        return self.classlist
+    def get_class_list(self):
+        return self.class_list
 
-    def getRelated(self, className):
+    def get_related(self, class_name):
         try:
-            return self.linksCount[className]
+            return self.links_count[class_name]
         except BaseException as e:
             print(e)
 
-    def setGitLinksToClass(self, links, nrOfCommits):
+    def set_git_links_to_class(self, links, commits_nr):
         '''classLinks = set()
         for classStruct in self.classlist:
             if classStruct.getFileName() in links:
                 classLinks.add(classStruct.getName())'''
 
         try:
-            for classStruct in self.classlist:
-                if classStruct.getName() in links:
-                    classStruct.setGitLinks(links, nrOfCommits)
+            for class_struct in self.class_list:
+                if class_struct.get_name() in links:
+                    class_struct.set_git_links(links, commits_nr)
         except BaseException as e:
             print(e)
 
-    def buildRelated(self):
-        for item in self.classlist:
-            item = item.buildRelated(self.classlistNames)
+    def build_related(self):
+        for item in self.class_list:
+            item = item.build_related(self.class_list_names)
 
-    def buildGit(self):
-        for classItem in self.classlist:
-            self.classlistNames.add(classItem.getName())
-        for item in self.classlist:
-            item = item.buildGit(self.classlistNames)
-
+    def build_git(self):
+        for class_item in self.class_list:
+            self.class_list_names.add(class_item.get_name())
+        for item in self.class_list:
+            item = item.build_git(self.class_list_names)

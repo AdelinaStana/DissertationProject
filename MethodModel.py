@@ -5,31 +5,31 @@ class MethodModel:
         self.args = []
         self.locals = []
 
-    def setType(self, type):
+    def set_type(self, type):
         self.type = type
 
-    def setName(self, name):
+    def set_name(self, name):
         self.name = name
 
-    def addLocals(self, local):
+    def add_locals(self, local):
         self.locals.append(local)
 
-    def addCall(self, localName):
+    def add_call(self, local_name):
         for local in self.locals:
-            if local.getName() == localName:
+            if local.getName() == local_name:
                 local.addCall()
 
-    def addArgs(self, arg):
+    def add_args(self, arg):
         self.args.append(arg)
 
-    def getArgs(self):
+    def get_args(self):
         return self.args
 
-    def getLocals(self):
+    def get_locals(self):
         return self.locals
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
-    def getType(self):
+    def get_type(self):
         return self.type

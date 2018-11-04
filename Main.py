@@ -5,8 +5,6 @@ import PyQt5.QtCore as QtCore
 from TitleBar import TitleBar
 from AnalysisManager import AnalysisManager
 from CheckableDirModel import CheckableDirModel
-
-
 import os
 
 
@@ -63,28 +61,27 @@ class Dialog(QMainWindow):
         self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
 
-        self.buildToolBar()
+        self.build_tool_bar()
 
-        self.titleBar.minimizeWindow.connect(self.minimizeWindowSlot)
-        self.titleBar.maximizeWindow.connect(self.maximizeWindowSlot)
-        self.titleBar.closeWindow.connect(self.closeWindowSlot)
+        self.titleBar.minimizeWindow.connect(self.minimize_window_slot)
+        self.titleBar.maximizeWindow.connect(self.maximize_window_slot)
+        self.titleBar.closeWindow.connect(self.close_window_slot)
 
-
-    def buildToolBar(self):
+    def build_tool_bar(self):
         self.toolbar = QToolBar()
         self.addToolBar(QtCore.Qt.LeftToolBarArea, self.toolbar)
 
-        loadAction = QAction(QtGui.QIcon('resources/installed.png'), 'Load Files', self)
-        processAction = QAction(QtGui.QIcon('resources/run.png'), 'Process Files', self)
-        xmlLoadAction = QAction(QtGui.QIcon('resources/load.png'), 'XML File', self)
+        load_action = QAction(QtGui.QIcon('resources/installed.png'), 'Load Files', self)
+        process_action = QAction(QtGui.QIcon('resources/run.png'), 'Process Files', self)
+        xml_load_action = QAction(QtGui.QIcon('resources/load.png'), 'XML File', self)
 
-        processAction.triggered.connect(self.processFilesClicked)
-        xmlLoadAction.triggered.connect(self.loadXmlClicked)
-        loadAction.triggered.connect(self.loadFilesClicked)
+        process_action.triggered.connect(self.process_files_clicked)
+        xml_load_action.triggered.connect(self.load_xml_clicked)
+        load_action.triggered.connect(self.load_files_clicked)
 
-        self.toolbar.addAction(loadAction)
-        self.toolbar.addAction(processAction)
-        self.toolbar.addAction(xmlLoadAction)
+        self.toolbar.addAction(load_action)
+        self.toolbar.addAction(process_action)
+        self.toolbar.addAction(xml_load_action)
 
         self.toolbar.setIconSize(QtCore.QSize(65, 65))
 
@@ -116,23 +113,23 @@ class Dialog(QMainWindow):
         self.setPalette(palette)
 
     @QtCore.pyqtSlot()
-    def closeWindowSlot(self):
+    def close_window_slot(self):
         self.deleteLater()
 
     @QtCore.pyqtSlot()
-    def minimizeWindowSlot(self):
+    def minimize_window_slot(self):
         self.showMinimized()
 
     @QtCore.pyqtSlot()
-    def maximizeWindowSlot(self):
+    def maximize_window_slot(self):
         if self.maxNormal:
             self.resize(800, 600)
             self.maxNormal = False
             self.titleBar.maximize.setIcon(QtGui.QIcon('resources/maximize.png'))
-            frameGm = self.frameGeometry()
-            centerPoint = QDesktopWidget().availableGeometry().center()
-            frameGm.moveCenter(centerPoint)
-            self.move(frameGm.topLeft())
+            frame_gm = self.frameGeometry()
+            center_point = QDesktopWidget().availableGeometry().center()
+            frame_gm.moveCenter(center_point)
+            self.move(frame_gm.topLeft())
 
         else:
             screen = QDesktopWidget().screenGeometry()
@@ -140,61 +137,62 @@ class Dialog(QMainWindow):
             self.maxNormal = True
             self.titleBar.maximize.setIcon(QtGui.QIcon('resources/unmaximize.png'))
 
-    def clearLayout(self, layout):
+    def clear_layout(self, layout):
         for i in reversed(range(layout.count())):
             layout.itemAt(i).widget().setParent(None)
 
-    def settingsClicked(self):
-        self.clearLayout(self.main_layout)
+    def settings_clicked(self):
+        self.clear_layout(self.main_layout)
 
-    def loadXmlClicked(self):
-        xmlFile = str(QFileDialog.getOpenFileName(self, "Select XML File")[0])
+    def load_xml_clicked(self):
+        xml_file = str(QFileDialog.getOpenFileName(self, "Select XML File")[0])
 
         self.progressBar.setValue(0)
-        self.printLine("Loading data from XML structure. Please wait ...\n")
+        self.print_line("Loading data from XML structure. Please wait ...\n")
         self.progressBar.update()
-        xmlDir = os.path.dirname(xmlFile)
-        self.analysisManager = AnalysisManager(self,xmlDir)
-        self.analysisManager.loadStructureFromXML(xmlFile)
+        xml_dir = os.path.dirname(xml_file)
+        self.analysisManager = AnalysisManager(self, xml_dir)
+        self.analysisManager.load_structure_from_xml(xml_file)
         self.progressBar.setValue(100)
         self.progressBar.update()
 
-    def loadFilesClicked(self):
-        filenames = self.model.exportChecked()
-        repoDir = self.model.rootDir
-        self.analysisManager = AnalysisManager(self, repoDir)
-        self.analysisManager.setFilesList(filenames)
-        self.printLine("Files loaded:\n")
-        total = len(filenames)
+    def load_files_clicked(self):
+        file_names = self.model.export_checked()
+        repo_dir = self.model.rootDir
+        self.analysisManager = AnalysisManager(self, repo_dir)
+        self.analysisManager.set_files_list(file_names)
+        self.print_line("Files loaded:\n")
+        total = len(file_names)
         count = 1
         self.progressBar.setValue(0)
         self.progressBar.update()
-        for file in filenames:
-            self.printLine(file+"\n")
+        for file in file_names:
+            self.print_line(file + "\n")
             self.progressBar.setValue((count*100)/total)
             self.progressBar.update()
             count += 1
 
-        self.printLine("Total number of files loaded : {}".format(total))
+        self.print_line("Total number of files loaded : {}".format(total))
 
-    def processFilesClicked(self):
-        self.analysisManager.setXMLFilesList(self.model.rootDir+"/~Temp/")
-        self.printLine("Converting to XML .......")
-        #self.analysisManager.convertToXML()
-        self.printLine("Getting commits .......")
-        #self.analysisManager.getGitCommits()
-        self.printLine("Processing data .......")
-        self.analysisManager.processData()
+    def process_files_clicked(self):
+        self.analysisManager.set_xml_files_list(self.model.rootDir + "/~Temp/")
+        self.print_line("Converting to XML .......")
+        # self.analysisManager.convertToXML()
+        self.print_line("Getting commits .......")
+        # self.analysisManager.getGitCommits()
+        self.print_line("Processing data .......")
+        self.analysisManager.process_data()
 
-    def printLine(self, text):
+    def print_line(self, text):
         self.app.processEvents()
         self.progressLine.setText(text)
 
-    def changeLayout(self):
-        self.clearLayout(self.main_layout)
+    def change_layout(self):
+        self.clear_layout(self.main_layout)
 
         self.main_widget.setLayout(self.main_layout)
         self.toolbar.setEnabled(True)
+
 
 def main():
     app = QApplication(sys.argv)
@@ -205,4 +203,15 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    noGui = False
+    #tbd
+    for arg in sys.argv:
+        if "-noGui=" in arg:
+            noGui = True
+        if "-folderPath" in arg:
+            folderPath = arg
+        if "-xmlPath" in arg:
+            xmlPath = arg
+
+    if not noGui:
+        main()

@@ -31,25 +31,25 @@ class TitleBar(QtWidgets.QMenuBar):
         self.setAutoFillBackground(True)
         self.setBackgroundRole(QtGui.QPalette.Highlight)
         self.setStyleSheet(css)
-        self.minimize= QtWidgets.QToolButton(self)
+        self.minimize = QtWidgets.QToolButton(self)
         self.minimize.setIcon(QtGui.QIcon('resources/minimize.png'))
 
-        self.maximize=QtWidgets.QToolButton(self)
+        self.maximize = QtWidgets.QToolButton(self)
         self.maximize.setIcon(QtGui.QIcon('resources/maximize.png'))
 
-        self.close=QtWidgets.QToolButton(self)
+        self.close = QtWidgets.QToolButton(self)
         self.close.setIcon(QtGui.QIcon('resources/close.png'))
 
-        self.title=QtWidgets.QLabel(self)
+        self.title = QtWidgets.QLabel(self)
         self.title.setText("  ")
         self.title.setStyleSheet("font-size: 10pt; font-family: Verdana;")
 
-        self.user=QtWidgets.QLabel(self)
+        self.user = QtWidgets.QLabel(self)
         self.user.setText(os.getlogin())
         self.user.setStyleSheet("font-size: 8pt; font-family: Verdana;")
 
-        hbox=QtWidgets.QHBoxLayout(self)
-        hbox.addWidget(self.close,   0, Qt.AlignTop | Qt.AlignLeft)
+        hbox = QtWidgets.QHBoxLayout(self)
+        hbox.addWidget(self.close, 0, Qt.AlignTop | Qt.AlignLeft)
         hbox.addWidget(self.minimize, 0, Qt.AlignTop | Qt.AlignLeft)
         hbox.addWidget(self.maximize, 0, Qt.AlignTop | Qt.AlignLeft)
         hbox.addStretch()
@@ -58,17 +58,18 @@ class TitleBar(QtWidgets.QMenuBar):
         hbox.addWidget(self.user, 0, Qt.AlignTop | Qt.AlignLeft)
         hbox.setSpacing(0)
 
-        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                           QtWidgets.QSizePolicy.Preferred)
 
         # self.connect(self.close,QtCore.SIGNAL("clicked()"),QtGui.qApp,QtCore.SLOT("quit()"))
-        self.close.clicked.connect(self.closeWindowSlot)
-        self.minimize.clicked.connect(self.minimizeWindowSlot)
-        self.maximize.clicked.connect(self.maximizeWindowSlot)
+        self.close.clicked.connect(self.close_window_slot)
+        self.minimize.clicked.connect(self.minimize_window_slot)
+        self.maximize.clicked.connect(self.maximize_window_slot)
 
-    def minimizeWindowSlot(self):
+    def minimize_window_slot(self):
         self.minimizeWindow.emit()
 
-    def maximizeWindowSlot(self):
+    def maximize_window_slot(self):
         self.maximizeWindow.emit()
 
     def mousePressEvent(self, event):
@@ -79,12 +80,12 @@ class TitleBar(QtWidgets.QMenuBar):
         self.isPressed = False
 
     def mouseMoveEvent(self, event):
-        if self.isPressed :
-            x=event.globalX()
-            y=event.globalY()
+        if self.isPressed:
+            x = event.globalX()
+            y = event.globalY()
             x_w = self.offset.x()
             y_w = self.offset.y()
-            self.parent.move(x-x_w, y-y_w)
+            self.parent.move(x - x_w, y - y_w)
 
-    def closeWindowSlot(self):
+    def close_window_slot(self):
         self.closeWindow.emit()

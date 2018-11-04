@@ -15,179 +15,164 @@ class ClassModel:
         self.git_links_total = []
         self.relation_list = set()
 
-    def setName(self, name):
+    def set_name(self, name):
         self.name = name
 
-    def setFile(self, file):
+    def set_file(self, file):
         self.file = file.replace('.xml', '')
 
-    def setSuperClass(self, name):
+    def set_super_class(self, name):
         self.superclass = name
 
-    def addAttribute(self, attrib):
+    def add_attribute(self, attrib):
         self.attributes.add(attrib)
 
-    def addMethod(self, meth):
+    def add_method(self, meth):
         self.methods.add(meth)
 
-    def getSuperClass(self):
+    def get_super_class(self):
         return self.superclass
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
-    def getFilePath(self):
+    def get_file_path(self):
         return self.file
 
-    def getFileName(self):
+    def get_file_name(self):
         return os.path.basename(self.file)
 
-    def getAttributes(self):
+    def get_attributes(self):
         return self.attributes
 
-    def getMethods(self):
+    def get_methods(self):
         return self.methods
 
-    def setRelated(self, rellist):
+    def set_related(self, rellist):
         self.relation_list = rellist
 
-    def getRelated(self):
+    def get_related(self):
         return self.relation_list
 
-    def buildRelated(self, classNamesList):
+    def build_related(self, class_names_list):
         self.relation_list = set()
 
         for attrib in self.attributes:
-            self.relation_list.add(attrib.getType())
+            self.relation_list.add(attrib.get_type())
 
         for method in self.methods:
-            for arg in method.getArgs():
-                self.relation_list.add(arg.getType())
+            for arg in method.get_args():
+                self.relation_list.add(arg.get_type())
 
-            for local in method.getLocals():
-                self.relation_list.add(local.getType())
+            for local in method.get_locals():
+                self.relation_list.add(local.get_type())
 
         if self.superclass != "None":
             self.relation_list.add(self.superclass)
 
-        self.relation_list = self.filterKnownClasses(self.relation_list, classNamesList)
+        self.relation_list = self.filter_known_classes(self.relation_list, class_names_list)
 
         return self
 
-    def filterKnownClasses(self, gitLinks, classNamesList):
-        gitLinksFiltered = []
-        for x in gitLinks:
-            if x in classNamesList:
-                gitLinksFiltered.append(x)
+    def filter_known_classes(self, git_links, class_names_list):
+        git_links_filtered = []
+        for x in git_links:
+            if x in class_names_list:
+                git_links_filtered.append(x)
 
-        return gitLinksFiltered
+        return git_links_filtered
 
-    def buildGit(self, classNamesList):
-        self.git_links_below5 = self.filterKnownClasses(self.git_links_below5, classNamesList)
-        self.git_links_below10 = self.filterKnownClasses(self.git_links_below10, classNamesList)
-        self.git_links_below20 = self.filterKnownClasses(self.git_links_below20, classNamesList)
-        self.git_links_total = self.filterKnownClasses(self.git_links_total, classNamesList)
+    def build_git(self, class_names_list):
+        self.git_links_below5 = self.filter_known_classes(self.git_links_below5, class_names_list)
+        self.git_links_below10 = self.filter_known_classes(self.git_links_below10, class_names_list)
+        self.git_links_below20 = self.filter_known_classes(self.git_links_below20, class_names_list)
+        self.git_links_total = self.filter_known_classes(self.git_links_total, class_names_list)
 
         return self
 
-    def printDetails(self, UIObj):
-        UIObj.printLine("________________________________")
-        UIObj.printLine("Class name: " + self.name)
-        UIObj.printLine("Superclass: " + self.superclass)
-        UIObj.printLine("Attributes: ")
+    def print_details(self, UIObj):
+        UIObj.print_line("________________________________")
+        UIObj.print_line("Class name: " + self.name)
+        UIObj.print_line("Superclass: " + self.superclass)
+        UIObj.print_line("Attributes: ")
         for attribute in self.attributes:
-            UIObj.printLine("Type: " + attribute.getType() + " Name: " + attribute.getName())
-        UIObj.printLine("Methods:")
+            UIObj.print_line("Type: " + attribute.get_type() + " Name: " + attribute.get_name())
+        UIObj.print_line("Methods:")
         for method in self.methods:
-            s = method.getType()+": "+method.getName()+"("
-            for arg in method.getArgs():
-                s = s +"Type: " + arg.getType() + " Name: " + arg.getName()+","
+            s = method.get_type() + ": " + method.get_name() + "("
+            for arg in method.get_args():
+                s = s + "Type: " + arg.get_type() + " Name: " + arg.get_name() + ","
             s += ")"
-            UIObj.printLine(s)
-            if method.getLocals():
-                UIObj.printLine(" Local decl:")
-                for local in method.getLocals():
-                    UIObj.printLine(" Type: " + local.getType() + " Name: " + local.getName())
+            UIObj.print_line(s)
+            if method.get_locals():
+                UIObj.print_line(" Local decl:")
+                for local in method.get_locals():
+                    UIObj.print_line(" Type: " + local.get_type() + " Name: " + local.get_name())
 
-                UIObj.printLine(" Calls:")
-                for local in method.getLocals():
-                    if len(local.getCalls()) != 0:
-                        UIObj.printLine(" Type: " + local.getType() + " Name: " + local.getName())
-                        for call in local.getCalls():
-                            UIObj.printLine(call)
+                UIObj.print_line(" Calls:")
+                for local in method.get_locals():
+                    if len(local.get_calls()) != 0:
+                        UIObj.print_line(" Type: " + local.get_type() + " Name: " + local.get_name())
+                        for call in local.get_calls():
+                            UIObj.print_line(call)
 
-    def setGitLinks(self, links, nrOfCommits):
+    def set_git_links(self, links, nr_of_commits):
         for link in links:
             if link != self.name:
-                if nrOfCommits <= 5:
+                if nr_of_commits <= 5:
                     self.git_links_below5.append(link)
-                if nrOfCommits <= 10:
+                if nr_of_commits <= 10:
                     self.git_links_below10.append(link)
-                if nrOfCommits <= 20:
+                if nr_of_commits <= 20:
                     self.git_links_below20.append(link)
 
                 self.git_links_total.append(link)
 
     ##########################################################################################################
 
-    def getOccurencesBelow5(self, nr):
+    def get_occurrence_below5(self, nr):
         return set([item for item in self.git_links_below5 if self.git_links_below5.count(item) >= nr])
 
-    def getOccurencesBelow10(self, nr):
+    def get_occurrence_below10(self, nr):
         return set([item for item in self.git_links_below10 if self.git_links_below10.count(item) >= nr])
 
-    def getOccurencesBelow20(self, nr):
+    def get_occurrence_below20(self, nr):
         return set([item for item in self.git_links_below20 if self.git_links_below20.count(item) >= nr])
 
-    def getOccurrencesTotal(self, nr):
-        links = self.getGitLinksTotal()
+    def get_occurrences_total(self, nr):
+        links = self.get_git_links_total()
         return [item for item in links if links.count(item) >= nr]
 
     #########################################################################################################
 
-    def getGitLinksTotal(self):
+    def get_git_links_total(self):
         return self.git_links_total
 
-    def getGit5Links(self):
+    def get_git5_links(self):
         return set(self.git_links_below5)
 
-    def getGit10Links(self):
+    def get_git10_links(self):
         return set(self.git_links_below10)
 
-    def getGit20Links(self):
+    def get_git20_links(self):
         return set(self.git_links_below20)
-
-    #######################################################################################################
-
-    def getMatch5(self):
-        return set(self.relation_list).intersection(self.git_links_below5)
-
-    def getMatch10(self):
-        return set(self.relation_list).intersection(self.git_links_below10)
-
-    def getMatch20(self):
-        return set(self.relation_list).intersection(self.git_links_below20)
-
-    def getMatchTotal(self):
-        git_links = self.getGitLinksTotal()
-        return set(self.relation_list).intersection(git_links)
 
     #####################################################################################################
 
-    def getMatch5Occ(self, nr_of_occ):
-        git_links = self.getOccurencesBelow5(nr_of_occ)
+    def get_match5_occ(self, nr_of_occ):
+        git_links = self.get_occurrence_below5(nr_of_occ)
         return set(self.relation_list).intersection(git_links)
 
-    def getMatch10Occ(self, nr_of_occ):
-        git_links = self.getOccurencesBelow10(nr_of_occ)
+    def get_match10_occ(self, nr_of_occ):
+        git_links = self.get_occurrence_below10(nr_of_occ)
         return set(self.relation_list).intersection(git_links)
 
-    def getMatch20Occ(self, nr_of_occ):
-        git_links = self.getOccurencesBelow20(nr_of_occ)
+    def get_match20_occ(self, nr_of_occ):
+        git_links = self.get_occurrence_below20(nr_of_occ)
         return set(self.relation_list).intersection(git_links)
 
-    def getMatchOccTotal(self, nr_of_occ):
-        git_links = self.getOccurrencesTotal(nr_of_occ)
+    def get_match_occ_total(self, nr_of_occ):
+        git_links = self.get_occurrences_total(nr_of_occ)
         return set(self.relation_list).intersection(git_links)
 
 
