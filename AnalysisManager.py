@@ -24,7 +24,7 @@ class AnalysisManager:
             print("Cannot set "+working_dir+" as working directory!")
 
         self.filesList = []
-        self.convertedFilesList = []
+        self.converted_files_list = []
         self.resultsText = ""
 
     def get_git_commits(self):
@@ -35,21 +35,22 @@ class AnalysisManager:
         self.filesList = files
 
     def set_xml_files_list(self, files_dir):
-        self.convertedFilesList = []
+        self.converted_files_list = []
         for r, d, f in os.walk(files_dir):
             for file in f:
-                self.convertedFilesList.append(os.path.join(r, file))
+                self.converted_files_list.append(os.path.join(r, file))
 
     def load_structure_from_xml(self, file):
         self.structureManager.loadStructure(file)
-        self.buildModel()
+        counter = Counter(self.structureManager)
+        counter.start_count()
 
     def convert_to_xml(self):
-        self.convertedFilesList = []
+        self.converted_files_list = []
         for file in self.filesList:
             if not re.search('\.xml', file):
                 return_val, path_to_file = self.srcMLWrapper.convert_files(file)
-                self.convertedFilesList.append(path_to_file)
+                self.converted_files_list.append(path_to_file)
                 self.parent.print_line(return_val)
             else:
                 self.parent.print_line("Files already converted to XML!")
@@ -124,7 +125,7 @@ class AnalysisManager:
                 print(e)
 
     def process_data(self):
-        for file in self.convertedFilesList:
+        for file in self.converted_files_list:
             try:
                 self.parent.print_line("Analysing " + file + " ...")
                 class_list = self.srcMLWrapper.get_class_model(file)

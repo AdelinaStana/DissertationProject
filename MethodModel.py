@@ -16,8 +16,8 @@ class MethodModel:
 
     def add_call(self, local_name):
         for local in self.locals:
-            if local.getName() == local_name:
-                local.addCall()
+            if local.get_name() == local_name:
+                local.add_call()
 
     def add_args(self, arg):
         self.args.append(arg)

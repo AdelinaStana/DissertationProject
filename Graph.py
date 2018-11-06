@@ -1,11 +1,6 @@
-from LinksDB import LinksDB
-
-
 class Graph:
-    def __init__(self):
-        self.db = LinksDB()
-        self.db.connect_database()
-        #db.create_table()
+    def __init__(self, database):
+        self.db = database
         self.nodes = []
         self.edges = set()
 
@@ -14,14 +9,13 @@ class Graph:
             self.nodes.append(name)
 
     def add_edge(self, x, y):
-        if (y, x) not in self.edges:
-            self.edges.add((x, y))
-        self.db.insert(x, y)
+        if x < y:
+            self.db.insert(x, y)
+        else:
+            self.db.insert(y, x)
 
     def number_of_edges(self):
-        self.db.execute()
-        self.db.clear_table()
-        return len(self.edges)
+        return self.db.count()
 
     def number_of_nodes(self):
         return len(self.nodes)
