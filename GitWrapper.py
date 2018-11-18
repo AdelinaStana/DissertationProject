@@ -78,26 +78,42 @@ class GitWrapper:
             if file_extension in accepted_suffix and not self.find_file(file):
                 self.get_file_from_git(commit, diff_added.b_path)
 
-    def create_folders(self):
+    def create_folders(self, path):
         try:
-            os.mkdir(self.repo_path + "\~deleted")
-        except BaseException:
-            shutil.rmtree(self.repo_path + "\~deleted")
-            os.mkdir(self.repo_path + "\~deleted")
-
-        try:
-            os.mkdir(self.repo_path+"\~diffs")
-        except BaseException :
-            ''' shutil.rmtree(self.repo_path+"\~diffs")
-            os.mkdir(self.repo_path + "\~diffs") '''
-            print("Error in making dir: "+self.repo_path+"\~diffs")
+            os.mkdir(path)
+        except:
+            print("Error in making dir: " + path)
 
     def get_repo(self):
         repo = Repo(self.repo_path)
-        current_dir = os.getcwd()
         os.chdir(self.repo_path)
+        return repo
 
-        self.create_folders()
+    def get_logs(self, files_list):
+        repo = self.get_repo()
+        paths_dict = {}
+
+        try:
+            if not repo.bare:
+                for file in files_list:
+                    rel_path = file.replace(self.repo_path, 'a')
+                    rel_path = rel_path.replace("\\", '/')
+                    paths_dict[rel_path] = set()
+                    old_paths = os.popen("git log --format='%n' --name-only --follow "+file).read()
+                    old_paths = old_paths.replace('\n', '')
+                    old_paths = old_paths.split('\'\'')
+                    for path in old_paths:
+                        if path != '':
+                            paths_dict[rel_path].add("a/"+path.replace('\'', ''))
+        except BaseException as e:
+            print(e)
+        return paths_dict
+
+    def get_commits(self):
+        current_dir = os.getcwd()
+        repo = self.get_repo()
+
+        self.create_folders(self.repo_path+"\~diffs")
         try:
             if not repo.bare:
                 print('Repo at '+self.repo_path+' successfully loaded.')
