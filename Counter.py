@@ -6,7 +6,7 @@ class Counter:
     def __init__(self, structure_manager):
         self.results_text = ""
         self.structure_manager = structure_manager
-        self.db = LinksDB()
+        self.db = LinksDB(self.structure_manager.working_dir)
         self.db.create_database()
         self.db.connect_database()
         self.db.create_tables()

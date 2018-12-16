@@ -166,9 +166,11 @@ class SrcMLWrapper:
                 class_list.extend(inside_class_list)
 
             class_model = ClassModel()
+
             file_path = file.replace(self.working_dir, 'a/')
             file_path = file_path.replace(".xml", "")
             file_path = file_path.replace("\\", "/")
+
             class_model.set_file(file_path)
             class_model.set_name(class_name)
             class_model.set_super_class(self.get_item_name(item, "super"))

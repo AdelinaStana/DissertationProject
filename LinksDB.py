@@ -86,7 +86,7 @@ class LinksDB:
         try:
             for table_name in self.TABLES:
                 self.db_cursor.execute(self.TABLES[table_name])
-                self.db_cursor.execute("CREATE UNIQUE INDEX indexname ON " + table_name+ "(name1,name2)")
+                self.db_cursor.execute("CREATE UNIQUE INDEX indexname ON " + table_name + "(name1,name2)")
             self.cnx.commit()
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
@@ -105,6 +105,7 @@ class LinksDB:
                     print("error in clearing table")
                 else:
                     print(err.msg)
+        print("Done!")
 
     def create_database(self):
         try:

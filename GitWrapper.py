@@ -98,6 +98,7 @@ class GitWrapper:
                 for file in files_list:
                     rel_path = file.replace(self.repo_path, 'a')
                     rel_path = rel_path.replace("\\", '/')
+                    rel_path = rel_path.replace("//", '/')
                     paths_dict[rel_path] = set()
                     old_paths = os.popen("git log --format='%n' --name-only --follow "+file).read()
                     old_paths = old_paths.replace('\n', '')

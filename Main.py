@@ -175,11 +175,11 @@ class Dialog(QMainWindow):
         self.print_line("Total number of files loaded : {}".format(total))
 
     def process_files_clicked(self):
-        self.analysisManager.set_xml_files_list(self.model.rootDir + "/~Temp/")
         self.print_line("Converting to XML .......")
-        # self.analysisManager.convertToXML()
+        self.analysisManager.convert_to_xml()
+        self.analysisManager.set_xml_files_list(self.model.rootDir + "/~Temp/")
         self.print_line("Getting commits .......")
-        # self.analysisManager.getGitCommits()
+        # self.analysisManager.get_git_commits()
         self.print_line("Processing data .......")
         self.analysisManager.process_data()
 

@@ -11,7 +11,7 @@ class StructureManager:
         self.class_list_names = set()
         self.class_list_files = set()
         self.links_count = {}
-        self.working_dir = working_dir + "\~results"
+        self.working_dir = working_dir + "/~results"
         if not os.path.isdir(self.working_dir):
             os.mkdir(self.working_dir)
 
@@ -205,15 +205,16 @@ class StructureManager:
             print(e)
 
     def set_git_links_to_class(self, links, commits_nr):
-        '''classLinks = set()
-        for classStruct in self.classlist:
-            if classStruct.getFileName() in links:
-                classLinks.add(classStruct.getName())'''
-
         try:
-            for class_struct in self.class_list:
-                if class_struct.get_name() in links:
-                    class_struct.set_git_links(links, commits_nr)
+            class_links = set()
+            for link in links:
+                for class_item in self.class_list:
+                    if class_item.has_path(link):
+                        class_links.add(class_item.get_name())
+
+            for class_item in self.class_list:
+                if class_item.get_name() in class_links:
+                    class_item.set_git_links(class_links, commits_nr)
         except BaseException as e:
             print(e)
 

@@ -6,7 +6,8 @@ class ClassModel:
         self.parent = parent
         self.superclass = "None"
         self.name = "None"
-        self.file = "None"
+        self.rel_file_path = "None"
+        self.old_paths = []
         self.attributes = set()
         self.methods = set()
         self.git_links_below5 = []
@@ -18,8 +19,11 @@ class ClassModel:
     def set_name(self, name):
         self.name = name
 
+    def set_old_paths(self, paths_list):
+        self.old_paths = paths_list
+
     def set_file(self, file):
-        self.file = file.replace('.xml', '')
+        self.rel_file_path = file.replace('.xml', '')
 
     def set_super_class(self, name):
         self.superclass = name
@@ -37,10 +41,13 @@ class ClassModel:
         return self.name
 
     def get_file_path(self):
-        return self.file
+        return self.rel_file_path
+
+    def get_all_paths(self):
+        return self.old_paths.add(self.rel_file_path)
 
     def get_file_name(self):
-        return os.path.basename(self.file)
+        return os.path.basename(self.rel_file_path)
 
     def get_attributes(self):
         return self.attributes
@@ -48,11 +55,18 @@ class ClassModel:
     def get_methods(self):
         return self.methods
 
-    def set_related(self, rellist):
-        self.relation_list = rellist
+    def set_related(self, rel_list):
+        self.relation_list = rel_list
 
     def get_related(self):
         return self.relation_list
+
+    def has_path(self, path):
+        if path == self.rel_file_path:
+            return True
+        if path in self.old_paths:
+            return True
+        return False
 
     def build_related(self, class_names_list):
         self.relation_list = set()

@@ -13,10 +13,10 @@ class AnalysisManager:
         if os.path.isdir(working_dir):
             self.workingDir = working_dir
             try:
-                os.mkdir(self.workingDir + "\~results")
-            except BaseException:
-                shutil.rmtree(self.workingDir + "\~results")
-                os.mkdir(self.workingDir + "\~results")
+                os.mkdir(self.workingDir + "/~results")
+            except:
+                shutil.rmtree(self.workingDir + "/~results")
+                os.mkdir(self.workingDir + "/~results")
 
             self.srcMLWrapper = SrcMLWrapper(self.workingDir)
             self.structureManager = StructureManager(self.workingDir)
@@ -29,7 +29,18 @@ class AnalysisManager:
 
     def get_git_commits(self):
         git_wrapper = GitWrapper(self.workingDir)
-        git_wrapper.get_repo()
+        git_wrapper.get_commits()
+
+    def get_renamed_paths(self):
+        git_wrapper = GitWrapper(self.workingDir)
+        old_paths_dict = git_wrapper.get_logs(self.filesList)
+
+        for class_item in self.structureManager.class_list:
+            try:
+                path = class_item.rel_file_path
+                class_item.set_old_paths(old_paths_dict[path])
+            except BaseException as e:
+                print(e)
 
     def set_files_list(self, files):
         self.filesList = files
@@ -87,16 +98,8 @@ class AnalysisManager:
                         list_of_lines.append(line)
                 for index in range(0, len(list_of_lines)-1):
                     line = list_of_lines[index]
-                    '''if re.search('.*::.*\{', line):
-                        words = line.split(' ')
-                        for i in range(0, len(words)):
-                            word = words[i]
-                            if re.search('.*::.*', word):
-                                name = word.split('::')
-                                if name not in git_link_list:
-                                    git_link_list.append(name[0])'''
 
-                    if re.search('.*class .*', line) or re.search('.*public class .*', line) or re.search('.*private class .*', line):
+                    '''if re.search('.*class .*', line) or re.search('.*public class .*', line) or re.search('.*private class .*', line):
                         try:
                             words = line.split(' ')
                             for i in range(0, len(words)):
@@ -106,18 +109,18 @@ class AnalysisManager:
                                         wordclass = words[i + 1].strip()
                                         git_link_list.add(wordclass.replace('{', ''))
                         except BaseException:
-                            print(line)
+                            print(line)'''
 
-                    '''if re.search("--- a.*", line):
-                        fileName = line.replace('---', '')
-                        fileName = fileName.strip()
-                        git_link_list.append(os.path.basename(fileName))
+                    if re.search("--- a.*", line):
+                        file_name = line.replace('---', '')
+                        file_name = file_name.strip()
+                        git_link_list.add(file_name)
 
                     if re.search("\+\+\+ b.*", line):
-                        fileName = line.replace('+++ b', 'a')
-                        fileName = fileName.strip()
-                        if os.path.basename(fileName) not in git_link_list:
-                            git_link_list.append(os.path.basename(fileName))'''
+                        file_name = line.replace('+++ b', 'a')
+                        file_name = file_name.strip()
+                        if file_name not in git_link_list:
+                            git_link_list.add(file_name)
 
                 if len(git_link_list) > 1:
                     self.structureManager.set_git_links_to_class(git_link_list, nr_of_commits)
@@ -129,12 +132,14 @@ class AnalysisManager:
             try:
                 self.parent.print_line("Analysing " + file + " ...")
                 class_list = self.srcMLWrapper.get_class_model(file)
+                print(file.replace(self.workingDir+"/~Temp/", "") + "," + str(len(class_list)))
                 for classStructure in class_list:
                     self.structureManager.add_class(classStructure)
             except BaseException as e:
                 print(e)
 
         self.structureManager.build_related()
+        self.get_renamed_paths()
         self.build_git_model()
         self.structureManager.build_git()
         self.structureManager.save_to_xml()
