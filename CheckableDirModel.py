@@ -57,7 +57,7 @@ class CheckableDirModel(QDirModel):
                     if self.rootDir is None:
                         self.rootDir = path
                     for filename in files:
-                        if QtCore.QFileInfo(filename).completeSuffix() in accepted_suffix:
+                        if QtCore.QFileInfo(filename).suffix() in accepted_suffix:
                             if self.check_state(self.index(os.path.join(path, filename))) == QtCore.Qt.Checked:
                                 try:
                                     selection.add(os.path.join(path, filename))

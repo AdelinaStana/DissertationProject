@@ -17,28 +17,27 @@ class SrcMLWrapper:
             os.mkdir(self.workingDir)'''
 
     def convert_files(self, file):
-            file_path = file.replace(self.root_dir, self.working_dir)
-            file_xml = file_path+".xml"
-            dir_path = os.path.dirname(file_xml)
-            if not os.path.exists(dir_path):
-                os.makedirs(dir_path)
-            cmd = "srcml \""+file+"\" -o \""+file_xml+"\""
-            rez = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-            if rez:
-                rez = "Converting "+file+" ...................\n"+str(rez)
-            else:
-                rez = "Converting " +file + " ...................\n"
-            return rez, file_xml
-
+        file_path = file.replace(self.root_dir, self.working_dir)
+        file_xml = file_path + ".xml"
+        dir_path = os.path.dirname(file_xml)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        cmd = "srcml \"" + file + "\" -o \"" + file_xml + "\""
+        rez = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+        if rez:
+            rez = "Converting " + file + " ...................\n" + str(rez)
+        else:
+            rez = "Converting " + file + " ...................\n"
+        return rez, file_xml
 
     ###############################################################################################
 
     def get_item(self, item, name):
-            return item.find("{http://www.srcML.org/srcML/src}"+name)
+        return item.find("{http://www.srcML.org/srcML/src}" + name)
 
     def get_item_name(self, item, name):
-            new = item.find("{http://www.srcML.org/srcML/src}"+name)
-            return self.get_name(new)
+        new = item.find("{http://www.srcML.org/srcML/src}" + name)
+        return self.get_name(new)
 
     def get_name(self, item):
         if item is not None:
@@ -63,14 +62,14 @@ class SrcMLWrapper:
         return name
 
     def get_type_and_name(self, item, tag):
-        _decl = item.find("{http://www.srcML.org/srcML/src}"+tag)
+        _decl = item.find("{http://www.srcML.org/srcML/src}" + tag)
         _type = self.get_type(_decl)
         name = self.get_name(_decl)
 
         return _type, name
 
     def get_all_items(self, item, name):
-        return item.findall("{http://www.srcML.org/srcML/src}"+name)
+        return item.findall("{http://www.srcML.org/srcML/src}" + name)
 
     def get_text(self, atr):
         if atr is not None:
@@ -83,7 +82,6 @@ class SrcMLWrapper:
             return text
         else:
             return "None"
-
 
     #############################################################################################
 
@@ -145,12 +143,14 @@ class SrcMLWrapper:
         return methods
 
     def get_namespace_root(self, root):
-        item = root.find("{http://www.srcML.org/srcML/src}namespace")
-        if item:
-            root = item.find("{http://www.srcML.org/srcML/src}block")
-            if root.find("{http://www.srcML.org/srcML/src}namespace"):
+        if root.find("{http://www.srcML.org/srcML/src}block"):
+            root = root.find("{http://www.srcML.org/srcML/src}block")
+        if root.find("{http://www.srcML.org/srcML/src}namespace"):
                 return self.get_namespace_root(root)
         return root
+
+    def get_namespaces(self, root):
+        return root.findall("{http://www.srcML.org/srcML/src}namespace")
 
     def get_class_model_java(self, file, root):
         class_list = []
@@ -158,7 +158,10 @@ class SrcMLWrapper:
         if root.find("{http://www.srcML.org/srcML/src}block"):
             root = root.find("{http://www.srcML.org/srcML/src}block")
 
-        for item in root.findall("{http://www.srcML.org/srcML/src}class"):
+        item_list = root.findall("{http://www.srcML.org/srcML/src}class") + \
+                        root.findall("{http://www.srcML.org/srcML/src}interface")
+
+        for item in item_list:
             class_name = self.get_name(item)
             inside_class_list = self.get_class_model_java(file, item)
 
@@ -189,14 +192,23 @@ class SrcMLWrapper:
             class_list.append(class_model)
         return class_list
 
-    def get_class_model_cpp(self, file):
+    def get_class_model_cpp(self, file, root):
         class_list = []
 
-        tree = ET.parse(file)
-        root = tree.getroot()
+        if root.find("{http://www.srcML.org/srcML/src}block"):
+            root = root.find("{http://www.srcML.org/srcML/src}block")
 
-        root = self.get_namespace_root(root)
-        for item in root.findall("{http://www.srcML.org/srcML/src}class"):
+        item_list = root.findall("{http://www.srcML.org/srcML/src}class") + \
+                    root.findall("{http://www.srcML.org/srcML/src}struct") + \
+                    root.findall("{http://www.srcML.org/srcML/src}enum") + \
+                    root.findall("{http://www.srcML.org/srcML/src}interface")
+
+        for item in item_list:
+            inside_class_list = self.get_class_model_cpp(file, item)
+
+            if inside_class_list:
+                class_list.extend(inside_class_list)
+
             class_model = ClassModel()
 
             class_model.set_file(file)
@@ -231,6 +243,18 @@ class SrcMLWrapper:
         if file.endswith('.java.xml'):
             class_list = self.get_class_model_java(file, root)
         else:
-            class_list = self.get_class_model_cpp(file)
+            namespace_list = self.get_namespaces(root)
+            if len(namespace_list) > 0:
+                for root_item in namespace_list:
+                    root_item = self.get_namespace_root(root_item)
+                    class_list += self.get_class_model_cpp(file, root_item)
+
+            item_list = root.findall("{http://www.srcML.org/srcML/src}class") + \
+                        root.findall("{http://www.srcML.org/srcML/src}struct") + \
+                        root.findall("{http://www.srcML.org/srcML/src}enum") + \
+                        root.findall("{http://www.srcML.org/srcML/src}interface")
+
+            for item in item_list:
+                class_list += self.get_class_model_cpp(file, item)
 
         return class_list

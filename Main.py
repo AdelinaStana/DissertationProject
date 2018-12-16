@@ -176,7 +176,7 @@ class Dialog(QMainWindow):
 
     def process_files_clicked(self):
         self.print_line("Converting to XML .......")
-        self.analysisManager.convert_to_xml()
+        # self.analysisManager.convert_to_xml()
         self.analysisManager.set_xml_files_list(self.model.rootDir + "/~Temp/")
         self.print_line("Getting commits .......")
         # self.analysisManager.get_git_commits()
