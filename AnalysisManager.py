@@ -132,16 +132,19 @@ class AnalysisManager:
             try:
                 self.parent.print_line("Analysing " + file + " ...")
                 class_list = self.srcMLWrapper.get_class_model(file)
-                print(file.replace(self.workingDir+"/~Temp/", "") + "," + str(len(class_list)))
+                # print(file.replace(self.workingDir+"/~Temp/", "") + "," + str(len(class_list)))
                 for classStructure in class_list:
                     self.structureManager.add_class(classStructure)
             except BaseException as e:
                 print(e)
-
+        print("Building structural dependencies!")
         self.structureManager.build_related()
+        print("Get old paths!")
         self.get_renamed_paths()
+        print("Build git model!")
         self.build_git_model()
         self.structureManager.build_git()
         self.structureManager.save_to_xml()
+        print("Start counter!")
         counter = Counter(self.structureManager)
         counter.start_count()

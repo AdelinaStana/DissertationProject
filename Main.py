@@ -204,7 +204,7 @@ def main():
 
 if __name__ == '__main__':
     noGui = False
-    #tbd
+    # tbd
     for arg in sys.argv:
         if "-noGui=" in arg:
             noGui = True

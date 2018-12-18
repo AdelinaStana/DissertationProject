@@ -240,21 +240,22 @@ class SrcMLWrapper:
         tree = ET.parse(file)
         root = tree.getroot()
 
-        if file.endswith('.java.xml'):
-            class_list = self.get_class_model_java(file, root)
-        else:
-            namespace_list = self.get_namespaces(root)
-            if len(namespace_list) > 0:
-                for root_item in namespace_list:
-                    root_item = self.get_namespace_root(root_item)
-                    class_list += self.get_class_model_cpp(file, root_item)
+        if root:
+            if file.endswith('.java.xml'):
+                class_list = self.get_class_model_java(file, root)
+            else:
+                namespace_list = self.get_namespaces(root)
+                if len(namespace_list) > 0:
+                    for root_item in namespace_list:
+                        root_item = self.get_namespace_root(root_item)
+                        class_list += self.get_class_model_cpp(file, root_item)
 
-            item_list = root.findall("{http://www.srcML.org/srcML/src}class") + \
-                        root.findall("{http://www.srcML.org/srcML/src}struct") + \
-                        root.findall("{http://www.srcML.org/srcML/src}enum") + \
-                        root.findall("{http://www.srcML.org/srcML/src}interface")
+                item_list = root.findall("{http://www.srcML.org/srcML/src}class") + \
+                            root.findall("{http://www.srcML.org/srcML/src}struct") + \
+                            root.findall("{http://www.srcML.org/srcML/src}enum") + \
+                            root.findall("{http://www.srcML.org/srcML/src}interface")
 
-            for item in item_list:
-                class_list += self.get_class_model_cpp(file, item)
+                for item in item_list:
+                    class_list += self.get_class_model_cpp(file, item)
 
         return class_list
