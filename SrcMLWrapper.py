@@ -3,7 +3,7 @@ from ClassModel import *
 from AttributeModel import *
 from MethodModel import *
 import os
-import xml.etree.ElementTree as ET
+import xml
 
 
 class SrcMLWrapper:
@@ -12,6 +12,7 @@ class SrcMLWrapper:
         self.working_dir = root_dir + "/~Temp/"
         if not os.path.isdir(self.working_dir):
             os.mkdir(self.working_dir)
+        self.unique_id = 0
         '''else:
             shutil.rmtree(self.workingDir)
             os.mkdir(self.workingDir)'''
@@ -32,7 +33,8 @@ class SrcMLWrapper:
 
     ###############################################################################################
 
-    def get_item(self, item, name):
+    @staticmethod
+    def get_item(item, name):
         return item.find("{http://www.srcML.org/srcML/src}" + name)
 
     def get_item_name(self, item, name):
@@ -68,7 +70,8 @@ class SrcMLWrapper:
 
         return _type, name
 
-    def get_all_items(self, item, name):
+    @staticmethod
+    def get_all_items(item, name):
         return item.findall("{http://www.srcML.org/srcML/src}" + name)
 
     def get_text(self, atr):
@@ -146,10 +149,11 @@ class SrcMLWrapper:
         if root.find("{http://www.srcML.org/srcML/src}block"):
             root = root.find("{http://www.srcML.org/srcML/src}block")
         if root.find("{http://www.srcML.org/srcML/src}namespace"):
-                return self.get_namespace_root(root)
+            return self.get_namespace_root(root)
         return root
 
-    def get_namespaces(self, root):
+    @staticmethod
+    def get_namespaces(root):
         return root.findall("{http://www.srcML.org/srcML/src}namespace")
 
     def get_class_model_java(self, file, root):
@@ -159,7 +163,7 @@ class SrcMLWrapper:
             root = root.find("{http://www.srcML.org/srcML/src}block")
 
         item_list = root.findall("{http://www.srcML.org/srcML/src}class") + \
-                        root.findall("{http://www.srcML.org/srcML/src}interface")
+                    root.findall("{http://www.srcML.org/srcML/src}interface")
 
         for item in item_list:
             class_name = self.get_name(item)
@@ -169,6 +173,7 @@ class SrcMLWrapper:
                 class_list.extend(inside_class_list)
 
             class_model = ClassModel()
+            self.unique_id += 1
 
             file_path = file.replace(self.working_dir, 'a/')
             file_path = file_path.replace(".xml", "")
@@ -176,6 +181,7 @@ class SrcMLWrapper:
 
             class_model.set_file(file_path)
             class_model.set_name(class_name)
+            class_model.set_unique_id(self.unique_id)
             class_model.set_super_class(self.get_item_name(item, "super"))
 
             block = self.get_item(item, 'block')
@@ -210,8 +216,10 @@ class SrcMLWrapper:
                 class_list.extend(inside_class_list)
 
             class_model = ClassModel()
+            self.unique_id += 1
 
             class_model.set_file(file)
+            class_model.set_unique_id(self.unique_id)
             class_model.set_name(self.get_name(item))
             class_model.set_super_class(self.get_item_name(item, "super"))
 
@@ -236,8 +244,7 @@ class SrcMLWrapper:
 
     def get_class_model(self, file):
         class_list = []
-        import xml.etree.ElementTree as ET
-        tree = ET.parse(file)
+        tree = xml.etree.ElementTree.parse(file)
         root = tree.getroot()
 
         if root:

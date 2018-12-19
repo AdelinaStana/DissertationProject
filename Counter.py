@@ -32,10 +32,10 @@ class Counter:
         g = Graph(self.working_dir+"\\code_links.csv")
         try:
             for classItem in self.structure_manager.get_class_list():
-                g.add_node(classItem.name)
+                g.add_node(classItem.unique_id)
                 related_list = classItem.get_related()
                 for related in related_list:
-                    g.add_edge(classItem.name, related)
+                    g.add_edge(classItem.unique_id, related)
         except BaseException as e:
             print(e)
         print("Number of classes: " + str(g.number_of_nodes()) + ",")
@@ -49,11 +49,9 @@ class Counter:
 
             try:
                 for class_item in self.structure_manager.get_class_list():
-                    class_name = class_item.name
-                    g.add_node(class_item.name)
                     git_list = class_item.get_occurrence_below5(occ)
                     for related in git_list:
-                        g.add_edge(class_name, related)
+                        g.add_edge(class_item.unique_id, related)
             except BaseException as e:
                 print(e)
             self.results_text += str(g.number_of_edges()) + ","
@@ -65,10 +63,9 @@ class Counter:
 
             try:
                 for classItem in self.structure_manager.get_class_list():
-                    g.add_node(classItem.name)
                     git_list = classItem.get_occurrence_below10(occ)
                     for related in git_list:
-                        g.add_edge(classItem.name, related)
+                        g.add_edge(classItem.unique_id, related)
             except BaseException as e:
                 print(e)
             self.results_text += str(g.number_of_edges()) + ","
@@ -80,10 +77,9 @@ class Counter:
             g = Graph(self.working_dir+"\\git20_links.csv")
             try:
                 for classItem in self.structure_manager.get_class_list():
-                    g.add_node(classItem.name)
                     git_list = classItem.get_occurrence_below20(occ)
                     for related in git_list:
-                        g.add_edge(classItem.name, related)
+                        g.add_edge(classItem.unique_id, related)
             except BaseException as e:
                 print(e)
             self.results_text += str(g.number_of_edges()) + ","
@@ -94,10 +90,9 @@ class Counter:
             g = Graph(self.working_dir+"\\git_total_links.csv")
             try:
                 for classItem in self.structure_manager.get_class_list():
-                    g.add_node(classItem.name)
                     git_list = classItem.get_occurrences_total(occ)
                     for related in git_list:
-                        g.add_edge(classItem.name, related)
+                        g.add_edge(classItem.unique_id, related)
             except BaseException as e:
                 print(e)
             self.results_text += str(g.number_of_edges()) + ","
@@ -109,10 +104,9 @@ class Counter:
             g = Graph(self.working_dir+"\\code_git_total_links.csv")
             try:
                 for classItem in self.structure_manager.get_class_list():
-                    g.add_node(classItem.name)
                     related_list = classItem.get_match_occ_total(occ)
                     for related in related_list:
-                        g.add_edge(classItem.name, related)
+                        g.add_edge(classItem.unique_id, related)
             except BaseException as e:
                 print(e)
             self.results_text += str(g.number_of_edges()) + ","
@@ -123,10 +117,9 @@ class Counter:
             g = Graph(self.working_dir+"\\code_git5_total_links.csv")
             try:
                 for classItem in self.structure_manager.get_class_list():
-                    g.add_node(classItem.name)
                     related_list = classItem.get_match5_occ(occ)
                     for related in related_list:
-                        g.add_edge(classItem.name, related)
+                        g.add_edge(classItem.unique_id, related)
             except BaseException as e:
                 print(e)
             self.results_text += str(g.number_of_edges()) + ","
@@ -137,10 +130,9 @@ class Counter:
             g = Graph(self.working_dir+"\\code_git10_total_links.csv")
             try:
                 for classItem in self.structure_manager.get_class_list():
-                    g.add_node(classItem.name)
                     related_list = classItem.get_match10_occ(occ)
                     for related in related_list:
-                        g.add_edge(classItem.name, related)
+                        g.add_edge(classItem.unique_id, related)
             except BaseException as e:
                 print(e)
             self.results_text += str(g.number_of_edges()) + ","
@@ -151,10 +143,9 @@ class Counter:
             g = Graph(self.working_dir+"\\code_git20_total_links.csv")
             try:
                 for classItem in self.structure_manager.get_class_list():
-                    g.add_node(classItem.name)
                     related_list = classItem.get_match20_occ(occ)
                     for related in related_list:
-                        g.add_edge(classItem.name, related)
+                        g.add_edge(classItem.unique_id, related)
             except BaseException as e:
                 print(e)
             self.results_text += str(g.number_of_edges()) + ","

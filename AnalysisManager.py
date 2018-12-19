@@ -89,7 +89,7 @@ class AnalysisManager:
                 # datafile = self.removeGitSimbols(datafile)
                 file = file.replace('.txt', '')
                 nr_of_commits_str = file.split('FilesChanged_')[1]
-                nr_of_commits = int(nr_of_commits_str)
+                commit_size = int(nr_of_commits_str)
                 git_link_list = set()
                 temp_list = datafile.split('\n')
                 list_of_lines = []
@@ -123,7 +123,7 @@ class AnalysisManager:
                             git_link_list.add(file_name)
 
                 if len(git_link_list) > 1:
-                    self.structureManager.set_git_links_to_class(git_link_list, nr_of_commits)
+                    self.structureManager.set_git_links_to_class(git_link_list, commit_size)
             except BaseException as e:
                 print(e)
 
@@ -143,8 +143,7 @@ class AnalysisManager:
         self.get_renamed_paths()
         print("Build git model!")
         self.build_git_model()
-        self.structureManager.build_git()
-        self.structureManager.save_to_xml()
+        # self.structureManager.save_to_xml()
         print("Start counter!")
         counter = Counter(self.structureManager)
         counter.start_count()

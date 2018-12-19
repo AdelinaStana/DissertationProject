@@ -204,26 +204,23 @@ class StructureManager:
         except BaseException as e:
             print(e)
 
-    def set_git_links_to_class(self, links, commits_nr):
+    def set_git_links_to_class(self, links, commit_size):
         try:
             class_links = set()
             for link in links:
                 for class_item in self.class_list:
                     if class_item.has_path(link):
-                        class_links.add(class_item.get_name())
+                        class_links.add(class_item.get_unique_id())
 
             for class_item in self.class_list:
-                if class_item.get_name() in class_links:
-                    class_item.set_git_links(class_links, commits_nr)
+                if class_item.get_unique_id() in class_links:
+                    class_item.set_git_links(class_links, commit_size)
         except BaseException as e:
             print(e)
 
     def build_related(self):
-        for item in self.class_list:
-            item = item.build_related(self.class_list_names)
-
-    def build_git(self):
-        for class_item in self.class_list:
-            self.class_list_names.add(class_item.get_name())
-        for item in self.class_list:
-            item = item.build_git(self.class_list_names)
+        try:
+            for item in self.class_list:
+                item = item.build_related(self.class_list_names, self.class_list)
+        except BaseException as e:
+            print(e)

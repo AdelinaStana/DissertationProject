@@ -7,6 +7,7 @@ class ClassModel:
         self.superclass = "None"
         self.name = "None"
         self.rel_file_path = "None"
+        self.unique_id = -1
         self.old_paths = []
         self.attributes = set()
         self.methods = set()
@@ -18,6 +19,9 @@ class ClassModel:
 
     def set_name(self, name):
         self.name = name
+
+    def set_unique_id(self, id):
+        self.unique_id = id
 
     def set_old_paths(self, paths_list):
         self.old_paths = paths_list
@@ -39,6 +43,9 @@ class ClassModel:
 
     def get_name(self):
         return self.name
+
+    def get_unique_id(self):
+        return self.unique_id
 
     def get_file_path(self):
         return self.rel_file_path
@@ -68,39 +75,28 @@ class ClassModel:
             return True
         return False
 
-    def build_related(self, class_names_list):
+    def add_if_exists(self, name, class_names_list, class_list):
+        if name in class_names_list:
+            for class_item in class_list:
+                if class_item.name == name:
+                    self.relation_list.add(class_item.unique_id)
+                    return
+
+    def build_related(self, class_names_list, class_list):
         self.relation_list = set()
 
         for attrib in self.attributes:
-            self.relation_list.add(attrib.get_type())
+            self.add_if_exists(attrib.get_type(), class_names_list, class_list)
 
         for method in self.methods:
             for arg in method.get_args():
-                self.relation_list.add(arg.get_type())
+                self.add_if_exists(arg.get_type(), class_names_list, class_list)
 
             for local in method.get_locals():
-                self.relation_list.add(local.get_type())
+                self.add_if_exists(local.get_type(), class_names_list, class_list)
 
         if self.superclass != "None":
-            self.relation_list.add(self.superclass)
-
-        self.relation_list = self.filter_known_classes(self.relation_list, class_names_list)
-
-        return self
-
-    def filter_known_classes(self, git_links, class_names_list):
-        git_links_filtered = []
-        for x in git_links:
-            if x in class_names_list:
-                git_links_filtered.append(x)
-
-        return git_links_filtered
-
-    def build_git(self, class_names_list):
-        self.git_links_below5 = self.filter_known_classes(self.git_links_below5, class_names_list)
-        self.git_links_below10 = self.filter_known_classes(self.git_links_below10, class_names_list)
-        self.git_links_below20 = self.filter_known_classes(self.git_links_below20, class_names_list)
-        self.git_links_total = self.filter_known_classes(self.git_links_total, class_names_list)
+            self.add_if_exists(self.superclass, class_names_list, class_list)
 
         return self
 
@@ -145,17 +141,17 @@ class ClassModel:
     ##########################################################################################################
 
     def get_occurrence_below5(self, nr):
-        return set([item for item in self.git_links_below5 if self.git_links_below5.count(item) >= nr])
+        return set(item for item in self.git_links_below5 if self.git_links_below5.count(item) >= nr)
 
     def get_occurrence_below10(self, nr):
-        return set([item for item in self.git_links_below10 if self.git_links_below10.count(item) >= nr])
+        return set(item for item in self.git_links_below10 if self.git_links_below10.count(item) >= nr)
 
     def get_occurrence_below20(self, nr):
-        return set([item for item in self.git_links_below20 if self.git_links_below20.count(item) >= nr])
+        return set(item for item in self.git_links_below20 if self.git_links_below20.count(item) >= nr)
 
     def get_occurrences_total(self, nr):
         links = self.get_git_links_total()
-        return [item for item in links if links.count(item) >= nr]
+        return set(item for item in links if links.count(item) >= nr)
 
     #########################################################################################################
 
