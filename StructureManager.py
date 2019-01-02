@@ -74,7 +74,7 @@ class StructureManager:
 
                 git_links_element = ET.SubElement(class_element,
                                                   'gitlinktotal')
-                git_list = ",".join(class_item.get_git_links_total())
+                git_list = ",".join(class_item.get_git_links_total()) #use .git_links_total instead of method because of set
                 git_links_element.text = git_list
 
                 code_related_element = ET.SubElement(class_element,

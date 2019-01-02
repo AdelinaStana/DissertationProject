@@ -150,40 +150,25 @@ class ClassModel:
         return set(item for item in self.git_links_below20 if self.git_links_below20.count(item) >= nr)
 
     def get_occurrences_total(self, nr):
-        links = self.get_git_links_total()
-        return set(item for item in links if links.count(item) >= nr)
-
-    #########################################################################################################
-
-    def get_git_links_total(self):
-        return self.git_links_total
-
-    def get_git5_links(self):
-        return set(self.git_links_below5)
-
-    def get_git10_links(self):
-        return set(self.git_links_below10)
-
-    def get_git20_links(self):
-        return set(self.git_links_below20)
+        return set(item for item in self.git_links_total if self.git_links_total.count(item) >= nr)
 
     #####################################################################################################
 
     def get_match5_occ(self, nr_of_occ):
         git_links = self.get_occurrence_below5(nr_of_occ)
-        return set(self.relation_list).intersection(git_links)
+        return set(self.relation_list.intersection(git_links))
 
     def get_match10_occ(self, nr_of_occ):
         git_links = self.get_occurrence_below10(nr_of_occ)
-        return set(self.relation_list).intersection(git_links)
+        return set(self.relation_list.intersection(git_links))
 
     def get_match20_occ(self, nr_of_occ):
         git_links = self.get_occurrence_below20(nr_of_occ)
-        return set(self.relation_list).intersection(git_links)
+        return set(self.relation_list.intersection(git_links))
 
     def get_match_occ_total(self, nr_of_occ):
         git_links = self.get_occurrences_total(nr_of_occ)
-        return set(self.relation_list).intersection(git_links)
+        return set(self.relation_list.intersection(git_links))
 
 
 

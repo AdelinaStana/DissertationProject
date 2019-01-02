@@ -29,7 +29,7 @@ class Counter:
         f.write(self.results_text + "\n")
 
     def count_code_links(self):
-        g = Graph(self.working_dir+"\\code_links.csv")
+        g = Graph(self.working_dir+"\\code_links")
         try:
             for classItem in self.structure_manager.get_class_list():
                 g.add_node(classItem.unique_id)
@@ -43,9 +43,10 @@ class Counter:
         self.results_text += str(g.number_of_edges()) + ","
 
     def count_git5_links(self):
-        print(".")
+        print("Build git5 links...")
         for occ in range(1, 5):
-            g = Graph(self.working_dir+"\\git5_links.csv")
+            print(str(occ))
+            g = Graph(self.working_dir+"\\git5_links")
 
             try:
                 for class_item in self.structure_manager.get_class_list():
@@ -57,10 +58,10 @@ class Counter:
             self.results_text += str(g.number_of_edges()) + ","
 
     def count_git10_links(self):
-        print(".")
+        print("Build git10 links...")
         for occ in range(1, 5):
-            g = Graph(self.working_dir+"\\git10_links.csv")
-
+            g = Graph(self.working_dir+"\\git10_links")
+            print(str(occ))
             try:
                 for classItem in self.structure_manager.get_class_list():
                     git_list = classItem.get_occurrence_below10(occ)
@@ -71,10 +72,10 @@ class Counter:
             self.results_text += str(g.number_of_edges()) + ","
 
     def count_git20_links(self):
-        print(".")
+        print("Build git20 links...")
         for occ in range(1, 5):
-
-            g = Graph(self.working_dir+"\\git20_links.csv")
+            print(str(occ))
+            g = Graph(self.working_dir+"\\git20_links")
             try:
                 for classItem in self.structure_manager.get_class_list():
                     git_list = classItem.get_occurrence_below20(occ)
@@ -85,9 +86,10 @@ class Counter:
             self.results_text += str(g.number_of_edges()) + ","
 
     def count_git_total_links(self):
-        print(".")
+        print("Build git total links...")
         for occ in range(1, 5):
-            g = Graph(self.working_dir+"\\git_total_links.csv")
+            g = Graph(self.working_dir+"\\git_total_links")
+            print(str(occ))
             try:
                 for classItem in self.structure_manager.get_class_list():
                     git_list = classItem.get_occurrences_total(occ)
@@ -98,10 +100,11 @@ class Counter:
             self.results_text += str(g.number_of_edges()) + ","
 
     def count_code_and_total_git_links(self):
-        print(".")
+        print("Build code and total links...")
 
         for occ in range(1, 5):
-            g = Graph(self.working_dir+"\\code_git_total_links.csv")
+            g = Graph(self.working_dir+"\\code_git_total_links")
+            print(str(occ))
             try:
                 for classItem in self.structure_manager.get_class_list():
                     related_list = classItem.get_match_occ_total(occ)
@@ -112,9 +115,10 @@ class Counter:
             self.results_text += str(g.number_of_edges()) + ","
 
     def count_code_and_git5_links(self):
-        print(".")
+        print("Build code and git5...")
         for occ in range(1, 5):
-            g = Graph(self.working_dir+"\\code_git5_total_links.csv")
+            g = Graph(self.working_dir+"\\code_git5_total_links")
+            print(str(occ))
             try:
                 for classItem in self.structure_manager.get_class_list():
                     related_list = classItem.get_match5_occ(occ)
@@ -125,9 +129,10 @@ class Counter:
             self.results_text += str(g.number_of_edges()) + ","
 
     def count_code_and_git10_links(self):
-        print(".")
+        print("Build code and git10...")
         for occ in range(1, 5):
-            g = Graph(self.working_dir+"\\code_git10_total_links.csv")
+            g = Graph(self.working_dir+"\\code_git10_total_links")
+            print(str(occ))
             try:
                 for classItem in self.structure_manager.get_class_list():
                     related_list = classItem.get_match10_occ(occ)
@@ -138,9 +143,10 @@ class Counter:
             self.results_text += str(g.number_of_edges()) + ","
 
     def count_code_and_git20_links(self):
-        print(".")
+        print("Build code and git20...")
         for occ in range(1, 5):
-            g = Graph(self.working_dir+"\\code_git20_total_links.csv")
+            g = Graph(self.working_dir+"\\code_git20_total_links")
+            print(str(occ))
             try:
                 for classItem in self.structure_manager.get_class_list():
                     related_list = classItem.get_match20_occ(occ)
