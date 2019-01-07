@@ -4,6 +4,7 @@ from AttributeModel import *
 from MethodModel import *
 import os
 import xml
+from pathlib import Path
 
 
 class SrcMLWrapper:
@@ -19,14 +20,18 @@ class SrcMLWrapper:
 
     def convert_files(self, file):
         file_path = file.replace(self.root_dir, self.working_dir)
+        file = file.replace("\\", "/")
+        file = file.replace("//", "/")
         file_xml = file_path + ".xml"
+        file_xml = file_xml.replace("\\", "/")
+        file_xml = file_xml.replace("//", "/")
         dir_path = os.path.dirname(file_xml)
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
         cmd = "srcml \"" + file + "\" -o \"" + file_xml + "\""
         rez = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
         if rez:
-            rez = "Converting " + file + " ...................\n" + str(rez)
+            rez = str(rez)
         else:
             rez = "Converting " + file + " ...................\n"
         return rez, file_xml
@@ -218,7 +223,11 @@ class SrcMLWrapper:
             class_model = ClassModel()
             self.unique_id += 1
 
-            class_model.set_file(file)
+            file_path = file.replace(self.working_dir, 'a/')
+            file_path = file_path.replace(".xml", "")
+            file_path = file_path.replace("\\", "/")
+
+            class_model.set_file(file_path)
             class_model.set_unique_id(self.unique_id)
             class_model.set_name(self.get_name(item))
             class_model.set_super_class(self.get_item_name(item, "super"))

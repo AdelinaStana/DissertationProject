@@ -1,4 +1,6 @@
 import os, shutil
+import subprocess
+
 from git import Repo
 
 EMPTY_TREE_SHA   = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
@@ -93,21 +95,24 @@ class GitWrapper:
         repo = self.get_repo()
         paths_dict = {}
 
-        try:
-            if not repo.bare:
-                for file in files_list:
+        if not repo.bare:
+            for file in files_list:
+                try:
                     rel_path = file.replace(self.repo_path, 'a')
                     rel_path = rel_path.replace("\\", '/')
                     rel_path = rel_path.replace("//", '/')
                     paths_dict[rel_path] = set()
-                    old_paths = os.popen("git log --format='%n' --name-only --follow "+file).read()
+                    cmd = "git log --format='%n' --name-only --follow "+file
+                    old_paths = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+                    old_paths = old_paths.decode('UTF-8')
                     old_paths = old_paths.replace('\n', '')
-                    old_paths = old_paths.split('\'\'')
+                    old_paths = set(old_paths.split('\'\''))
                     for path in old_paths:
                         if path != '':
                             paths_dict[rel_path].add("a/"+path.replace('\'', ''))
-        except BaseException as e:
-            print(e)
+                except BaseException as e:
+                        print(e)
+                        print(file)
         return paths_dict
 
     def get_commits(self):

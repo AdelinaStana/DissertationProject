@@ -11,10 +11,10 @@ class ClassModel:
         self.old_paths = []
         self.attributes = set()
         self.methods = set()
-        self.git_links_below5 = []
-        self.git_links_below10 = []
-        self.git_links_below20 = []
-        self.git_links_total = []
+        self.git_links_below5 = {}
+        self.git_links_below10 = {}
+        self.git_links_below20 = {}
+        self.git_links_total = {}
         self.relation_list = set()
 
     def set_name(self, name):
@@ -75,28 +75,25 @@ class ClassModel:
             return True
         return False
 
-    def add_if_exists(self, name, class_names_list, class_list):
-        if name in class_names_list:
-            for class_item in class_list:
-                if class_item.name == name:
-                    self.relation_list.add(class_item.unique_id)
-                    return
+    def add_if_exists(self, name, class_dict):
+        if name in class_dict.keys():
+            self.relation_list.add(class_dict[name].unique_id)
 
     def build_related(self, class_names_list, class_list):
         self.relation_list = set()
 
         for attrib in self.attributes:
-            self.add_if_exists(attrib.get_type(), class_names_list, class_list)
+            self.add_if_exists(attrib.get_type(), class_dict)
 
         for method in self.methods:
             for arg in method.get_args():
-                self.add_if_exists(arg.get_type(), class_names_list, class_list)
+                self.add_if_exists(arg.get_type(), class_dict)
 
             for local in method.get_locals():
-                self.add_if_exists(local.get_type(), class_names_list, class_list)
+                self.add_if_exists(local.get_type(), class_dict)
 
         if self.superclass != "None":
-            self.add_if_exists(self.superclass, class_names_list, class_list)
+            self.add_if_exists(self.superclass, class_dict)
 
         return self
 
@@ -130,45 +127,57 @@ class ClassModel:
         for link in links:
             if link != self.name:
                 if nr_of_commits <= 5:
-                    self.git_links_below5.append(link)
+                    if link not in self.git_links_below5.keys():
+                        self.git_links_below5[link] = 1
+                    else:
+                        self.git_links_below5[link] += 1
                 if nr_of_commits <= 10:
-                    self.git_links_below10.append(link)
+                    if link not in self.git_links_below10.keys():
+                        self.git_links_below10[link] = 1
+                    else:
+                        self.git_links_below10[link] += 1
                 if nr_of_commits <= 20:
-                    self.git_links_below20.append(link)
+                    if link not in self.git_links_below20.keys():
+                        self.git_links_below20[link] = 1
+                    else:
+                        self.git_links_below20[link] += 1
 
-                self.git_links_total.append(link)
+                if link not in self.git_links_total.keys():
+                    self.git_links_total[link] = 1
+                else:
+                    self.git_links_total[link] += 1
 
     ##########################################################################################################
 
     def get_occurrence_below5(self, nr):
-        return set(item for item in self.git_links_below5 if self.git_links_below5.count(item) >= nr)
+        return set(key for key, value in self.git_links_below5.items() if value >= nr)
 
     def get_occurrence_below10(self, nr):
-        return set(item for item in self.git_links_below10 if self.git_links_below10.count(item) >= nr)
+        return set(key for key, value in self.git_links_below10.items() if value >= nr)
 
     def get_occurrence_below20(self, nr):
-        return set(item for item in self.git_links_below20 if self.git_links_below20.count(item) >= nr)
+        return set(key for key, value in self.git_links_below20.items() if value >= nr)
 
     def get_occurrences_total(self, nr):
-        return set(item for item in self.git_links_total if self.git_links_total.count(item) >= nr)
+        return set(key for key, value in self.git_links_total.items() if value >= nr)
 
     #####################################################################################################
 
     def get_match5_occ(self, nr_of_occ):
         git_links = self.get_occurrence_below5(nr_of_occ)
-        return set(self.relation_list.intersection(git_links))
+        return self.relation_list.intersection(git_links)
 
     def get_match10_occ(self, nr_of_occ):
         git_links = self.get_occurrence_below10(nr_of_occ)
-        return set(self.relation_list.intersection(git_links))
+        return self.relation_list.intersection(git_links)
 
     def get_match20_occ(self, nr_of_occ):
         git_links = self.get_occurrence_below20(nr_of_occ)
-        return set(self.relation_list.intersection(git_links))
+        return self.relation_list.intersection(git_links)
 
     def get_match_occ_total(self, nr_of_occ):
         git_links = self.get_occurrences_total(nr_of_occ)
-        return set(self.relation_list.intersection(git_links))
+        return self.relation_list.intersection(git_links)
 
 
 

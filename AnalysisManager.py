@@ -5,7 +5,7 @@ from GitWrapper import GitWrapper
 from StructureManager import *
 from SrcMLWrapper import SrcMLWrapper
 from Counter import Counter
-
+from threading import Thread
 
 class AnalysisManager:
     def __init__(self, parent, working_dir):
@@ -25,7 +25,7 @@ class AnalysisManager:
 
         self.filesList = []
         self.converted_files_list = []
-        self.resultsText = ""
+        self.old_paths_dict = {}
 
     def get_git_commits(self):
         git_wrapper = GitWrapper(self.workingDir)
@@ -33,12 +33,13 @@ class AnalysisManager:
 
     def get_renamed_paths(self):
         git_wrapper = GitWrapper(self.workingDir)
-        old_paths_dict = git_wrapper.get_logs(self.filesList)
+        self.old_paths_dict = git_wrapper.get_logs(self.filesList)
 
+    def assign_old_paths(self):
         for class_item in self.structureManager.class_list:
             try:
                 path = class_item.rel_file_path
-                class_item.set_old_paths(old_paths_dict[path])
+                class_item.set_old_paths(self.old_paths_dict[path])
             except BaseException as e:
                 print(e)
 
@@ -83,7 +84,7 @@ class AnalysisManager:
         print("Start analysing git diffs...")
         for file in os.listdir(self.workingDir+"//~diffs"):
             try:
-                print(file)
+                # print(file)
                 datafile = open(self.workingDir+"//~diffs//"+file, 'r+', encoding="utf8", errors='ignore').read()
                 # datafile = self.removeComments(datafile)
                 # datafile = self.removeGitSimbols(datafile)
@@ -114,12 +115,14 @@ class AnalysisManager:
                     if re.search("--- a.*", line):
                         file_name = line.replace('---', '')
                         file_name = file_name.strip()
-                        git_link_list.add(file_name)
+                        if re.search('\.cs', file_name) or re.search('\.java',
+                                                                                                        file_name):
+                            git_link_list.add(file_name)
 
                     if re.search("\+\+\+ b.*", line):
                         file_name = line.replace('+++ b', 'a')
                         file_name = file_name.strip()
-                        if file_name not in git_link_list:
+                        if re.search('\.cs', file_name) or re.search('\.java', file_name):
                             git_link_list.add(file_name)
 
                 if len(git_link_list) > 1:
@@ -127,7 +130,7 @@ class AnalysisManager:
             except BaseException as e:
                 print(e)
 
-    def process_data(self):
+    def analyse_xml(self):
         for file in self.converted_files_list:
             try:
                 self.parent.print_line("Analysing " + file + " ...")
@@ -137,10 +140,22 @@ class AnalysisManager:
                     self.structureManager.add_class(classStructure)
             except BaseException as e:
                 print(e)
-        print("Building structural dependencies!")
+
         self.structureManager.build_related()
-        print("Get old paths!")
-        self.get_renamed_paths()
+
+    def process_data(self):
+        print("Building structural dependencies!")
+
+        t_related = Thread(target=self.analyse_xml, args=())
+        t_rename = Thread(target=self.get_renamed_paths, args=())
+
+        t_rename.start()
+        t_related.start()
+
+        t_rename.join()
+        t_related.join()
+
+        self.assign_old_paths()
         print("Build git model!")
         self.build_git_model()
         # self.structureManager.save_to_xml()

@@ -8,8 +8,7 @@ import xml.etree.ElementTree as ET
 class StructureManager:
     def __init__(self, working_dir):
         self.class_list = set()
-        self.class_list_names = set()
-        self.class_list_files = set()
+        self.class_dict = {}
         self.links_count = {}
         self.working_dir = working_dir + "/~results"
         if not os.path.isdir(self.working_dir):
@@ -191,9 +190,8 @@ class StructureManager:
         return self.get_text(new)
 
     def add_class(self, class_struct):
+        self.class_dict[class_struct.get_name()] = class_struct
         self.class_list.add(class_struct)
-        self.class_list_names.add(class_struct.get_name())
-        self.class_list_files.add(class_struct.get_file_path())
 
     def get_class_list(self):
         return self.class_list
@@ -221,6 +219,6 @@ class StructureManager:
     def build_related(self):
         try:
             for item in self.class_list:
-                item = item.build_related(self.class_list_names, self.class_list)
+                item = item.build_related(self.class_dict)
         except BaseException as e:
             print(e)
