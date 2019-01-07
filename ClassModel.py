@@ -79,7 +79,7 @@ class ClassModel:
         if name in class_dict.keys():
             self.relation_list.add(class_dict[name].unique_id)
 
-    def build_related(self, class_names_list, class_list):
+    def build_related(self, class_dict):
         self.relation_list = set()
 
         for attrib in self.attributes:
