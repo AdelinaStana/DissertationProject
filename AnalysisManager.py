@@ -71,6 +71,8 @@ class AnalysisManager:
     def remove_comments(self, string):
         string = re.sub(re.compile("/\*.*?\*/", re.DOTALL), "",
                         string)  # remove all occurance streamed comments (/*COMMENT */) from string
+        string = re.sub(re.compile("@@.*?@@", re.DOTALL), "",
+                        string)
         string = re.sub(re.compile("//.*?\n"), "",
                         string)  # remove all occurance singleline comments (//COMMENT\n ) from string
         return string
@@ -80,11 +82,10 @@ class AnalysisManager:
         string = string.replace('-', '')
         return string
 
-    def build_git_model(self):
+    def build_git_model1(self):
         print("Start analysing git diffs...")
         for file in os.listdir(self.workingDir+"//~diffs"):
             try:
-                # print(file)
                 datafile = open(self.workingDir+"//~diffs//"+file, 'r+', encoding="utf8", errors='ignore').read()
                 # datafile = self.removeComments(datafile)
                 # datafile = self.removeGitSimbols(datafile)
@@ -115,8 +116,7 @@ class AnalysisManager:
                     if re.search("--- a.*", line):
                         file_name = line.replace('---', '')
                         file_name = file_name.strip()
-                        if re.search('\.cs', file_name) or re.search('\.java',
-                                                                                                        file_name):
+                        if re.search('\.cs', file_name) or re.search('\.java',file_name):
                             git_link_list.add(file_name)
 
                     if re.search("\+\+\+ b.*", line):
@@ -130,12 +130,41 @@ class AnalysisManager:
             except BaseException as e:
                 print(e)
 
+    def build_git_model(self):
+        print("Start analysing git diffs...")
+        for file in os.listdir(self.workingDir+"//~diffs"):
+            try:
+                datafile = open(self.workingDir+"//~diffs//"+file, 'r+', encoding="utf8", errors='ignore').read()
+                datafile = self.remove_comments(datafile)
+                file = file.replace('.txt', '')
+                nr_of_commits_str = file.split('FilesChanged_')[1]
+                commit_size = int(nr_of_commits_str)
+                git_link_list = set()
+                temp_list = datafile.split('\n')
+                list_of_lines = []
+                for line in temp_list:
+                    if not re.match('^\s*$', line):
+                        list_of_lines.append(line)
+                for index in range(0, len(list_of_lines)-1):
+                    line = list_of_lines[index]
+
+                    if re.search("\+\+\+ b.*", line):
+                        file_name = line.replace('+++ b', 'a')
+                        file_name = file_name.strip()
+                        if not list_of_lines[index+1].startswith('diff'):
+                            if re.search('\.cs', file_name) or re.search('\.java', file_name):
+                                git_link_list.add(file_name)
+
+                if len(git_link_list) > 1:
+                    self.structureManager.set_git_links_to_class(git_link_list, commit_size)
+            except BaseException as e:
+                print(e)
+
     def analyse_xml(self):
         for file in self.converted_files_list:
             try:
                 self.parent.print_line("Analysing " + file + " ...")
                 class_list = self.srcMLWrapper.get_class_model(file)
-                # print(file.replace(self.workingDir+"/~Temp/", "") + "," + str(len(class_list)))
                 for classStructure in class_list:
                     self.structureManager.add_class(classStructure)
             except BaseException as e:

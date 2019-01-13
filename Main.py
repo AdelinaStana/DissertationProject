@@ -175,13 +175,14 @@ class Dialog(QMainWindow):
         self.print_line("Total number of files loaded : {}".format(total))
 
     def process_files_clicked(self):
-        self.print_line("Converting to XML .......")
+        self.get_res()
+        # self.print_line("Converting to XML .......")
         # self.analysisManager.convert_to_xml()
-        self.analysisManager.set_xml_files_list(self.model.rootDir + "/~Temp/")
-        self.print_line("Getting commits .......")
+        # self.analysisManager.set_xml_files_list(self.model.rootDir + "/~Temp/")
+        # self.print_line("Getting commits .......")
         # self.analysisManager.get_git_commits()
-        self.print_line("Processing data .......")
-        self.analysisManager.process_data()
+        # self.print_line("Processing data .......")
+        # self.analysisManager.process_data()
 
     def print_line(self, text):
         self.app.processEvents()
@@ -192,6 +193,67 @@ class Dialog(QMainWindow):
 
         self.main_widget.setLayout(self.main_layout)
         self.toolbar.setEnabled(True)
+
+    def get_git_diff_struct(self):
+        accepted_suffix = ['cpp', 'h', 'cc', 'c++', 'java', 'cs']
+        repo_list = []
+        for repo in repo_list:
+            print(repo)
+            file_names = []
+            for path, dirs, files in os.walk(repo):
+                for filename in files:
+                    if QtCore.QFileInfo(filename).suffix() in accepted_suffix:
+                                file_names.append(os.path.join(path, filename))
+            print(len(file_names))
+            self.analysisManager = AnalysisManager(self, repo)
+            self.analysisManager.set_files_list(file_names)
+            self.analysisManager.convert_to_xml()
+            self.analysisManager.set_xml_files_list(repo + "/~Temp/")
+            self.analysisManager.get_git_commits()
+
+    def get_res(self):
+        accepted_suffix = ['cpp', 'h', 'cc', 'c++', 'java', 'cs']
+        repo_list = [
+                    "E:\\faculta\\Master\\TestProjects\\mcidasv",
+                    "E:\\faculta\\Master\\TestProjects\\antlr4",
+                    "E:\\faculta\\Master\\TestProjects\\robolectric",
+                    "E:\\faculta\\Master\\TestProjects\\PowerShell",
+                    "E:\\faculta\\Master\\TestProjects\\WeiXinMPSDK",
+                    "E:\\faculta\\Master\\TestProjects\\ArchiSteamFarm",
+                    "E:\\faculta\\Master\\TestProjects\\VisualStudio",
+                    "E:\\faculta\\Master\\TestProjects\\CppSharp",
+                    "E:\\faculta\Master\\TestProjects\\bluecove",
+                    "E:\\faculta\Master\\TestProjects\\shipkit",
+                    "E:\\faculta\Master\\TestProjects\\ShareX",
+                    "E:\\faculta\Master\\TestProjects\\RxJava",
+                    "E:\\faculta\Master\\TestProjects\\restfb",
+                    "E:\\faculta\Master\\TestProjects\\powermock",
+                    "E:\\faculta\Master\\TestProjects\\orleans",
+                    "E:\\faculta\Master\\TestProjects\\OpenClinica",
+                    "E:\\faculta\Master\\TestProjects\\mockito",
+                    "E:\\faculta\Master\\TestProjects\\jellyfin",
+                    "E:\\faculta\Master\\TestProjects\\grizzly",
+                    "E:\\faculta\Master\\TestProjects\\cli",
+                    "E:\\faculta\Master\\TestProjects\\aeron",
+                    "E:\\faculta\Master\\TestProjects\\Avalonia",
+                    "E:\\faculta\Master\\TestProjects\\aspnetboilerplate",
+                    "E:\\faculta\Master\\TestProjects\\EntityFrameworkCore",
+                    "E:\\faculta\Master\\TestProjects\\cake",
+                    "E:\\faculta\Master\\TestProjects\\aima-java",
+                    "E:\\faculta\Master\\TestProjects\\metro-jax-ws"
+                     ]
+        for repo in repo_list:
+            print("______________________________________________________________________________________")
+            print(repo)
+            file_names = []
+            for path, dirs, files in os.walk(repo):
+                for filename in files:
+                    if QtCore.QFileInfo(filename).suffix() in accepted_suffix:
+                                file_names.append(os.path.join(path, filename))
+            self.analysisManager = AnalysisManager(self, repo)
+            self.analysisManager.set_files_list(file_names)
+            self.analysisManager.set_xml_files_list(repo + "/~Temp/")
+            self.analysisManager.process_data()
 
 
 def main():
