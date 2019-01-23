@@ -175,7 +175,7 @@ class Dialog(QMainWindow):
         self.print_line("Total number of files loaded : {}".format(total))
 
     def process_files_clicked(self):
-        self.get_res()
+        self.get_commits()
         # self.print_line("Converting to XML .......")
         # self.analysisManager.convert_to_xml()
         # self.analysisManager.set_xml_files_list(self.model.rootDir + "/~Temp/")
@@ -254,6 +254,64 @@ class Dialog(QMainWindow):
             self.analysisManager.set_files_list(file_names)
             self.analysisManager.set_xml_files_list(repo + "/~Temp/")
             self.analysisManager.process_data()
+
+    def get_commits(self):
+        repo_list = [
+            "E:\\faculta\\Master\\TestProjects\\mcidasv",
+            "E:\\faculta\\Master\\TestProjects\\antlr4",
+            "E:\\faculta\\Master\\TestProjects\\robolectric",
+            "E:\\faculta\\Master\\TestProjects\\PowerShell",
+            "E:\\faculta\\Master\\TestProjects\\WeiXinMPSDK",
+            "E:\\faculta\\Master\\TestProjects\\ArchiSteamFarm",
+            "E:\\faculta\\Master\\TestProjects\\VisualStudio",
+            "E:\\faculta\\Master\\TestProjects\\CppSharp",
+            "E:\\faculta\Master\\TestProjects\\bluecove",
+            "E:\\faculta\Master\\TestProjects\\shipkit",
+            "E:\\faculta\Master\\TestProjects\\ShareX",
+            "E:\\faculta\Master\\TestProjects\\RxJava",
+            "E:\\faculta\Master\\TestProjects\\restfb",
+            "E:\\faculta\Master\\TestProjects\\powermock",
+            "E:\\faculta\Master\\TestProjects\\orleans",
+            "E:\\faculta\Master\\TestProjects\\OpenClinica",
+            "E:\\faculta\Master\\TestProjects\\mockito",
+            "E:\\faculta\Master\\TestProjects\\jellyfin",
+            "E:\\faculta\Master\\TestProjects\\grizzly",
+            "E:\\faculta\Master\\TestProjects\\cli",
+            "E:\\faculta\Master\\TestProjects\\aeron",
+            "E:\\faculta\Master\\TestProjects\\Avalonia",
+            "E:\\faculta\Master\\TestProjects\\aspnetboilerplate",
+            "E:\\faculta\Master\\TestProjects\\EntityFrameworkCore",
+            "E:\\faculta\Master\\TestProjects\\cake",
+            "E:\\faculta\Master\\TestProjects\\aima-java",
+            "E:\\faculta\Master\\TestProjects\\metro-jax-ws"
+        ]
+        for repo in repo_list:
+            print("______________________________________________________________________________________")
+            print(repo)
+            repo = repo + "\\~diffs"
+            sum_commits = 0
+            nr_commits = 0
+            commits_under_5 = 0
+            commits_under_10 = 0
+            commits_under_20 = 0
+            commits_above_20 = 0
+            for file in os.listdir(repo):
+                nr_commits += 1
+                file = file.replace('.txt', '')
+                nr_of_commits_str = file.split('FilesChanged_')[1]
+                commit_size = int(nr_of_commits_str)
+                if commit_size <= 5:
+                    commits_under_5 += 1
+                elif commit_size <= 10:
+                    commits_under_10 += 1
+                elif commit_size <= 20:
+                    commits_under_20 += 1
+                else:
+                    commits_above_20 += 1
+                sum_commits += commit_size
+
+            print(str(commits_under_5) + "," + str(commits_under_10) + "," + str(commits_under_20) + "," + str(commits_above_20)
+                  + "," + str(sum_commits/nr_commits))
 
 
 def main():
