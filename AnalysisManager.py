@@ -5,7 +5,7 @@ from GitWrapper import GitWrapper
 from StructureManager import *
 from SrcMLWrapper import SrcMLWrapper
 from Counter import Counter
-from threading import Thread
+
 
 class AnalysisManager:
     def __init__(self, parent, working_dir):
@@ -33,7 +33,7 @@ class AnalysisManager:
 
     def get_renamed_paths(self):
         git_wrapper = GitWrapper(self.workingDir)
-        self.old_paths_dict = git_wrapper.get_logs(self.filesList)
+        self.old_paths_dict = git_wrapper.get_old_paths(self.filesList)
 
     def assign_old_paths(self):
         for class_item in self.structureManager.class_list:
@@ -82,13 +82,11 @@ class AnalysisManager:
         string = string.replace('-', '')
         return string
 
-    def build_git_model1(self):
+    def build_git_model_with_comments(self):
         print("Start analysing git diffs...")
         for file in os.listdir(self.workingDir+"//~diffs"):
             try:
                 datafile = open(self.workingDir+"//~diffs//"+file, 'r+', encoding="utf8", errors='ignore').read()
-                # datafile = self.removeComments(datafile)
-                # datafile = self.removeGitSimbols(datafile)
                 file = file.replace('.txt', '')
                 nr_of_commits_str = file.split('FilesChanged_')[1]
                 commit_size = int(nr_of_commits_str)
@@ -101,24 +99,6 @@ class AnalysisManager:
                 for index in range(0, len(list_of_lines)-1):
                     line = list_of_lines[index]
 
-                    '''if re.search('.*class .*', line) or re.search('.*public class .*', line) or re.search('.*private class .*', line):
-                        try:
-                            words = line.split(' ')
-                            for i in range(0, len(words)):
-                                word = words[i].strip()
-                                if word == 'class' and words[i + 1].strip() not in git_link_list:
-                                    if list_of_lines[index+1].strip() != '}':
-                                        wordclass = words[i + 1].strip()
-                                        git_link_list.add(wordclass.replace('{', ''))
-                        except BaseException:
-                            print(line)'''
-
-                    if re.search("--- a.*", line):
-                        file_name = line.replace('---', '')
-                        file_name = file_name.strip()
-                        if re.search('\.cs', file_name) or re.search('\.java',file_name):
-                            git_link_list.add(file_name)
-
                     if re.search("\+\+\+ b.*", line):
                         file_name = line.replace('+++ b', 'a')
                         file_name = file_name.strip()
@@ -130,7 +110,7 @@ class AnalysisManager:
             except BaseException as e:
                 print(e)
 
-    def build_git_model(self):
+    def build_git_model_without_comments(self):
         print("Start analysing git diffs...")
         for file in os.listdir(self.workingDir+"//~diffs"):
             try:
@@ -174,19 +154,13 @@ class AnalysisManager:
 
     def process_data(self):
         print("Building structural dependencies!")
+        self.analyse_xml()
 
-        t_related = Thread(target=self.analyse_xml, args=())
-        t_rename = Thread(target=self.get_renamed_paths, args=())
-
-        t_rename.start()
-        t_related.start()
-
-        t_rename.join()
-        t_related.join()
-
+        self.get_renamed_paths()
         self.assign_old_paths()
+
         print("Build git model!")
-        self.build_git_model()
+        self.build_git_model_with_comments()
         # self.structureManager.save_to_xml()
         print("Start counter!")
         counter = Counter(self.structureManager)

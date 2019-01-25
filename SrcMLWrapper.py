@@ -273,5 +273,4 @@ class SrcMLWrapper:
 
                 for item in item_list:
                     class_list += self.get_class_model_cpp(file, item)
-
         return class_list

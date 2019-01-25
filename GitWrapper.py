@@ -80,46 +80,71 @@ class GitWrapper:
             if file_extension in accepted_suffix and not self.find_file(file):
                 self.get_file_from_git(commit, diff_added.b_path)
 
-    def create_folders(self, path):
-        try:
-            os.mkdir(path)
-        except:
-            print("Error in making dir: " + path)
-
     def get_repo(self):
         repo = Repo(self.repo_path)
         os.chdir(self.repo_path)
         return repo
 
-    def get_logs(self, files_list):
+    def get_old_paths_from_logs(self, files_list):
+        paths_dict = {}
+        for file in files_list:
+            try:
+                rel_path = file.replace(self.repo_path, 'a')
+                rel_path = rel_path.replace("\\", '/')
+                rel_path = rel_path.replace("//", '/')
+                paths_dict[rel_path] = set()
+                cmd = "git log --format='%n' --name-only --follow " + file
+                old_paths = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+                old_paths = old_paths.decode('UTF-8')
+                old_paths = old_paths.replace('\n', '')
+                old_paths = set(old_paths.split('\'\''))
+                for path in old_paths:
+                    if path != '':
+                        paths_dict[rel_path].add("a/" + path.replace('\'', ''))
+            except BaseException as e:
+                print(e)
+                print(file)
+        return paths_dict
+
+    def get_old_paths(self, files_list):
         repo = self.get_repo()
         paths_dict = {}
 
-        if not repo.bare:
-            for file in files_list:
-                try:
-                    rel_path = file.replace(self.repo_path, 'a')
-                    rel_path = rel_path.replace("\\", '/')
-                    rel_path = rel_path.replace("//", '/')
-                    paths_dict[rel_path] = set()
-                    cmd = "git log --format='%n' --name-only --follow "+file
-                    old_paths = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-                    old_paths = old_paths.decode('UTF-8')
-                    old_paths = old_paths.replace('\n', '')
-                    old_paths = set(old_paths.split('\'\''))
-                    for path in old_paths:
-                        if path != '':
-                            paths_dict[rel_path].add("a/"+path.replace('\'', ''))
-                except BaseException as e:
-                        print(e)
-                        print(file)
+        if not repo.bare and not os.path.exists(self.repo_path+'/old_paths_dict.txt'):
+            paths_dict = self.get_old_paths_from_logs(files_list)
+
+            try:
+                f = open(self.repo_path + '/old_paths_dict.txt', 'w+')
+                for key in paths_dict.keys():
+                    line = key + ":"
+                    for path in paths_dict[key]:
+                        line += path + ","
+                    f.write(line + "\n")
+                f.close()
+            except BaseException as e:
+                print(e)
+                print("Error in git old paths saving of: " + self.repo_path)
+        else:
+            if os.path.exists(self.repo_path+'\\old_paths_dict.txt'):
+                print("Import from file git old paths!")
+                f = open(self.repo_path + '\\old_paths_dict.txt', 'r')
+                lines = f.readlines()
+                for line in lines:
+                    key, values = line.split(":")
+                    values = values.replace("\n", "")
+                    values = values.split(",")
+                    paths_dict[key] = values[:-1]  # "\n" will generate an additional empty item in list
+            else:
+                print("Cannot load old paths dict for "+self.repo_path)
         return paths_dict
 
     def get_commits(self):
         current_dir = os.getcwd()
         repo = self.get_repo()
-
-        self.create_folders(self.repo_path+"\~diffs")
+        try:
+            os.mkdir(self.repo_path+"\~diffs")
+        except:
+            print("Could not create folder: " + self.repo_path + "\~diffs")
         try:
             if not repo.bare:
                 print('Repo at '+self.repo_path+' successfully loaded.')

@@ -1,7 +1,10 @@
+import csv
 import sys
 from PyQt5.QtWidgets import *
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
+
+from GitWrapper import GitWrapper
 from TitleBar import TitleBar
 from AnalysisManager import AnalysisManager
 from CheckableDirModel import CheckableDirModel
@@ -12,6 +15,34 @@ class Dialog(QMainWindow):
 
     def __init__(self, app, exePath=None, parent=None):
         super(QMainWindow, self).__init__(parent)
+        self.accepted_suffix = ['cpp', 'h', 'cc', 'c++', 'java', 'cs']
+        self.repo_list = ["E:\\faculta\\Master\\TestProjects\\bluecove",
+                          "E:\\faculta\\Master\\TestProjects\\aima-java",
+                          "E:\\faculta\\Master\\TestProjects\\powermock",
+                          "E:\\faculta\\Master\\TestProjects\\restfb",
+                          "E:\\faculta\\Master\\TestProjects\\RxJava",
+                          "E:\\faculta\\Master\\TestProjects\\metro-jax-ws",
+                          "E:\\faculta\\Master\\TestProjects\\mockito",
+                          "E:\\faculta\\Master\\TestProjects\\grizzly",
+                          "E:\\faculta\\Master\\TestProjects\\shipkit",
+                          "E:\\faculta\\Master\\TestProjects\\OpenClinica",
+                          "E:\\faculta\\Master\\TestProjects\\robolectric",
+                          "E:\\faculta\\Master\\TestProjects\\aeron",
+                          "E:\\faculta\\Master\\TestProjects\\antlr4",
+                          "E:\\faculta\\Master\\TestProjects\\mcidasv",
+                          "E:\\faculta\\Master\\TestProjects\\ShareX",
+                          "E:\\faculta\\Master\\TestProjects\\aspnetboilerplate",
+                          "E:\\faculta\\Master\\TestProjects\\orleans",
+                          "E:\\faculta\\Master\\TestProjects\\cli",
+                          "E:\\faculta\\Master\\TestProjects\\cake",
+                          "E:\\faculta\\Master\\TestProjects\\Avalonia",
+                          "E:\\faculta\\Master\\TestProjects\\EntityFrameworkCore",
+                          "E:\\faculta\\Master\\TestProjects\\jellyfin",
+                          "E:\\faculta\\Master\\TestProjects\\PowerShell",
+                          "E:\\faculta\\Master\\TestProjects\\WeiXinMPSDK",
+                          "E:\\faculta\\Master\\TestProjects\\ArchiSteamFarm",
+                          "E:\\faculta\\Master\\TestProjects\\VisualStudio",
+                          "E:\\faculta\\Master\\TestProjects\\CppSharp"]
 
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setAutoFillBackground(True)
@@ -168,21 +199,11 @@ class Dialog(QMainWindow):
         self.progressBar.update()
         for file in file_names:
             self.print_line(file + "\n")
-            self.progressBar.setValue((count*100)/total)
+            self.progressBar.setValue((count * 100) / total)
             self.progressBar.update()
             count += 1
 
         self.print_line("Total number of files loaded : {}".format(total))
-
-    def process_files_clicked(self):
-        self.get_commits()
-        # self.print_line("Converting to XML .......")
-        # self.analysisManager.convert_to_xml()
-        # self.analysisManager.set_xml_files_list(self.model.rootDir + "/~Temp/")
-        # self.print_line("Getting commits .......")
-        # self.analysisManager.get_git_commits()
-        # self.print_line("Processing data .......")
-        # self.analysisManager.process_data()
 
     def print_line(self, text):
         self.app.processEvents()
@@ -194,98 +215,28 @@ class Dialog(QMainWindow):
         self.main_widget.setLayout(self.main_layout)
         self.toolbar.setEnabled(True)
 
-    def get_git_diff_struct(self):
-        accepted_suffix = ['cpp', 'h', 'cc', 'c++', 'java', 'cs']
-        repo_list = []
-        for repo in repo_list:
-            print(repo)
-            file_names = []
-            for path, dirs, files in os.walk(repo):
-                for filename in files:
-                    if QtCore.QFileInfo(filename).suffix() in accepted_suffix:
-                                file_names.append(os.path.join(path, filename))
-            print(len(file_names))
-            self.analysisManager = AnalysisManager(self, repo)
-            self.analysisManager.set_files_list(file_names)
-            self.analysisManager.convert_to_xml()
-            self.analysisManager.set_xml_files_list(repo + "/~Temp/")
-            self.analysisManager.get_git_commits()
+    def process_files_clicked(self):
+        self.get_res()
 
-    def get_res(self):
-        accepted_suffix = ['cpp', 'h', 'cc', 'c++', 'java', 'cs']
-        repo_list = [
-                    "E:\\faculta\\Master\\TestProjects\\mcidasv",
-                    "E:\\faculta\\Master\\TestProjects\\antlr4",
-                    "E:\\faculta\\Master\\TestProjects\\robolectric",
-                    "E:\\faculta\\Master\\TestProjects\\PowerShell",
-                    "E:\\faculta\\Master\\TestProjects\\WeiXinMPSDK",
-                    "E:\\faculta\\Master\\TestProjects\\ArchiSteamFarm",
-                    "E:\\faculta\\Master\\TestProjects\\VisualStudio",
-                    "E:\\faculta\\Master\\TestProjects\\CppSharp",
-                    "E:\\faculta\Master\\TestProjects\\bluecove",
-                    "E:\\faculta\Master\\TestProjects\\shipkit",
-                    "E:\\faculta\Master\\TestProjects\\ShareX",
-                    "E:\\faculta\Master\\TestProjects\\RxJava",
-                    "E:\\faculta\Master\\TestProjects\\restfb",
-                    "E:\\faculta\Master\\TestProjects\\powermock",
-                    "E:\\faculta\Master\\TestProjects\\orleans",
-                    "E:\\faculta\Master\\TestProjects\\OpenClinica",
-                    "E:\\faculta\Master\\TestProjects\\mockito",
-                    "E:\\faculta\Master\\TestProjects\\jellyfin",
-                    "E:\\faculta\Master\\TestProjects\\grizzly",
-                    "E:\\faculta\Master\\TestProjects\\cli",
-                    "E:\\faculta\Master\\TestProjects\\aeron",
-                    "E:\\faculta\Master\\TestProjects\\Avalonia",
-                    "E:\\faculta\Master\\TestProjects\\aspnetboilerplate",
-                    "E:\\faculta\Master\\TestProjects\\EntityFrameworkCore",
-                    "E:\\faculta\Master\\TestProjects\\cake",
-                    "E:\\faculta\Master\\TestProjects\\aima-java",
-                    "E:\\faculta\Master\\TestProjects\\metro-jax-ws"
-                     ]
-        for repo in repo_list:
-            print("______________________________________________________________________________________")
-            print(repo)
-            file_names = []
-            for path, dirs, files in os.walk(repo):
-                for filename in files:
-                    if QtCore.QFileInfo(filename).suffix() in accepted_suffix:
-                                file_names.append(os.path.join(path, filename))
-            self.analysisManager = AnalysisManager(self, repo)
-            self.analysisManager.set_files_list(file_names)
-            self.analysisManager.set_xml_files_list(repo + "/~Temp/")
-            self.analysisManager.process_data()
+    '''
+    This method is usually called for the entire process of converting to xml, saving git diff files and counting
+    logical and structural dependencies for a selected repo from UI.
+    '''
+    def process_files(self):
+        self.print_line("Converting to XML .......")
+        self.analysisManager.convert_to_xml()
+        self.analysisManager.set_xml_files_list(self.model.rootDir + "/~Temp/")
+        self.print_line("Getting commits .......")
+        self.analysisManager.get_git_commits()
+        self.print_line("Processing data .......")
+        self.analysisManager.process_data()
 
-    def get_commits(self):
-        repo_list = [
-            "E:\\faculta\\Master\\TestProjects\\mcidasv",
-            "E:\\faculta\\Master\\TestProjects\\antlr4",
-            "E:\\faculta\\Master\\TestProjects\\robolectric",
-            "E:\\faculta\\Master\\TestProjects\\PowerShell",
-            "E:\\faculta\\Master\\TestProjects\\WeiXinMPSDK",
-            "E:\\faculta\\Master\\TestProjects\\ArchiSteamFarm",
-            "E:\\faculta\\Master\\TestProjects\\VisualStudio",
-            "E:\\faculta\\Master\\TestProjects\\CppSharp",
-            "E:\\faculta\Master\\TestProjects\\bluecove",
-            "E:\\faculta\Master\\TestProjects\\shipkit",
-            "E:\\faculta\Master\\TestProjects\\ShareX",
-            "E:\\faculta\Master\\TestProjects\\RxJava",
-            "E:\\faculta\Master\\TestProjects\\restfb",
-            "E:\\faculta\Master\\TestProjects\\powermock",
-            "E:\\faculta\Master\\TestProjects\\orleans",
-            "E:\\faculta\Master\\TestProjects\\OpenClinica",
-            "E:\\faculta\Master\\TestProjects\\mockito",
-            "E:\\faculta\Master\\TestProjects\\jellyfin",
-            "E:\\faculta\Master\\TestProjects\\grizzly",
-            "E:\\faculta\Master\\TestProjects\\cli",
-            "E:\\faculta\Master\\TestProjects\\aeron",
-            "E:\\faculta\Master\\TestProjects\\Avalonia",
-            "E:\\faculta\Master\\TestProjects\\aspnetboilerplate",
-            "E:\\faculta\Master\\TestProjects\\EntityFrameworkCore",
-            "E:\\faculta\Master\\TestProjects\\cake",
-            "E:\\faculta\Master\\TestProjects\\aima-java",
-            "E:\\faculta\Master\\TestProjects\\metro-jax-ws"
-        ]
-        for repo in repo_list:
+    '''
+        This method is usually called for getting git commits statistics for all the repos that I have.
+        Nr of git commits with less than 5, 10, 20, inf files changed. And average per repo.
+    '''
+    def get_commits_statistic(self):
+        for repo in self.repo_list:
             print("______________________________________________________________________________________")
             print(repo)
             repo = repo + "\\~diffs"
@@ -310,8 +261,17 @@ class Dialog(QMainWindow):
                     commits_above_20 += 1
                 sum_commits += commit_size
 
-            print(str(commits_under_5) + "," + str(commits_under_10) + "," + str(commits_under_20) + "," + str(commits_above_20)
-                  + "," + str(sum_commits/nr_commits))
+            print(str(commits_under_5) + "," + str(commits_under_10) + "," + str(commits_under_20) + "," + str(
+                commits_above_20)
+                  + "," + str(sum_commits / nr_commits))
+
+    def get_res(self):
+        for repo in self.repo_list:
+            print("______________________________________________________________________________________")
+            print(repo)
+            self.analysisManager = AnalysisManager(self, repo)
+            self.analysisManager.set_xml_files_list(repo + "/~Temp/")
+            self.analysisManager.process_data()
 
 
 def main():
