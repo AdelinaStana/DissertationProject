@@ -125,7 +125,7 @@ class ClassModel:
 
     def set_git_links(self, links, nr_of_commits):
         for link in links:
-            if link != self.name:
+            if link != self.unique_id:
                 if nr_of_commits <= 5:
                     if link not in self.git_links_below5.keys():
                         self.git_links_below5[link] = 1
@@ -166,6 +166,34 @@ class ClassModel:
     def get_match5_occ(self, nr_of_occ):
         git_links = self.get_occurrence_below5(nr_of_occ)
         return self.relation_list.intersection(git_links)
+
+    def get_match10_occ(self, nr_of_occ):
+        git_links = self.get_occurrence_below10(nr_of_occ)
+        return self.relation_list.intersection(git_links)
+
+    def get_match20_occ(self, nr_of_occ):
+        git_links = self.get_occurrence_below20(nr_of_occ)
+        return self.relation_list.intersection(git_links)
+
+    def get_match_occ_total(self, nr_of_occ):
+        git_links = self.get_occurrences_total(nr_of_occ)
+        return self.relation_list.intersection(git_links)
+
+    #####################################################################################################
+
+    def get_git_below_5_links(self, system_keys):
+        git_links = set(key for key, value in self.git_links_below5.items())
+        pure_git_links = list(set(git_links) - set(self.relation_list))
+        output = self.name
+        for key in system_keys:
+            if key in pure_git_links and key != self.unique_id:
+                output += ",1"
+            if key == self.unique_id:
+                output += ","+ str(len(pure_git_links))
+            if key not in pure_git_links:
+                output += ",0"
+        print(output)
+        return len(pure_git_links)
 
     def get_match10_occ(self, nr_of_occ):
         git_links = self.get_occurrence_below10(nr_of_occ)
