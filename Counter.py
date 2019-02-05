@@ -5,13 +5,13 @@ from threading import Thread
 class Counter:
     def __init__(self, structure_manager):
         self.results_count = []
-        for i in range(0, 34):
+        for i in range(0, 6):
             self.results_count.append(-1)
         self.structure_manager = structure_manager
         self.working_dir = self.structure_manager.working_dir.replace("~Temp", "~results")
 
     def start_count(self):
-        import time
+        '''import time
 
         start = time.time()
 
@@ -57,7 +57,17 @@ class Counter:
         end = time.time()
 
         elapsed = end - start
-        print(elapsed)
+        print(elapsed)'''
+
+        self.count_minus_code_and_git5_links()
+        self.count_minus_code_and_git10_links()
+        self.count_minus_code_and_git20_links()
+
+        with open('E:\\results.txt', 'a') as file:
+            line = ",".join([str(x) for x in self.results_count])
+            file.write(line + "\n")
+
+        print(self.results_count)
 
     def count_code_links(self):
         g = Graph(self.working_dir+"\\code_links")
@@ -177,3 +187,80 @@ class Counter:
             self.results_count[pos + occ] = g.number_of_edges()
         print("Count code and git20...")
 
+    def count_minus_code_and_git5_links(self):
+        g = Graph(self.working_dir + "\\minus_code_and_git5_linkss")
+        avg = 0
+        counter = 0
+        try:
+            for classItem in self.structure_manager.get_class_list():
+                k = classItem.get_median(classItem.git_links_below5)
+                avg += k
+                if k > 0:
+                    counter += 1
+        except BaseException as e:
+            print(e)
+
+        avg = int(round(avg/counter))
+
+        try:
+            for classItem in self.structure_manager.get_class_list():
+                related_list = classItem.get_git_links(classItem.git_links_below5, avg)
+                for related in related_list:
+                    g.add_edge(classItem.unique_id, related)
+        except BaseException as e:
+            print(e)
+
+        self.results_count[0] = avg
+        self.results_count[1] = g.number_of_edges()
+
+    def count_minus_code_and_git10_links(self):
+        g = Graph(self.working_dir + "\\minus_code_and_git10_linkss")
+        avg = 0
+        counter = 0
+        try:
+            for classItem in self.structure_manager.get_class_list():
+                k = classItem.get_median(classItem.git_links_below10)
+                avg += k
+                if k > 0:
+                    counter += 1
+        except BaseException as e:
+            print(e)
+
+        avg = int(round(avg / counter))
+
+        try:
+            for classItem in self.structure_manager.get_class_list():
+                related_list = classItem.get_git_links(classItem.git_links_below10, avg)
+                for related in related_list:
+                    g.add_edge(classItem.unique_id, related)
+        except BaseException as e:
+            print(e)
+
+        self.results_count[2] = avg
+        self.results_count[3] = g.number_of_edges()
+
+    def count_minus_code_and_git20_links(self):
+        g = Graph(self.working_dir + "\\minus_code_and_git20_linkss")
+        avg = 0
+        counter = 0
+        try:
+            for classItem in self.structure_manager.get_class_list():
+                k = classItem.get_median(classItem.git_links_below20)
+                avg += k
+                if k > 0:
+                    counter += 1
+        except BaseException as e:
+            print(e)
+
+        avg = int(round(avg / counter))
+
+        try:
+            for classItem in self.structure_manager.get_class_list():
+                related_list = classItem.get_git_links(classItem.git_links_below20, avg)
+                for related in related_list:
+                    g.add_edge(classItem.unique_id, related)
+        except BaseException as e:
+            print(e)
+
+        self.results_count[4] = avg
+        self.results_count[5] = g.number_of_edges()

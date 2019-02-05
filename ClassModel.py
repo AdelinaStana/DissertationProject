@@ -181,31 +181,79 @@ class ClassModel:
 
     #####################################################################################################
 
-    def get_git_below_5_links(self, system_keys):
+    def print_git_below_5_links(self, system_keys):
         git_links = set(key for key, value in self.git_links_below5.items())
         pure_git_links = list(set(git_links) - set(self.relation_list))
         output = self.name
         for key in system_keys:
             if key in pure_git_links and key != self.unique_id:
-                output += ",1"
+                output += "," + str(self.git_links_below5[key])
             if key == self.unique_id:
-                output += ","+ str(len(pure_git_links))
+                output += "," + str(len(pure_git_links))
             if key not in pure_git_links:
                 output += ",0"
         print(output)
         return len(pure_git_links)
 
-    def get_match10_occ(self, nr_of_occ):
-        git_links = self.get_occurrence_below10(nr_of_occ)
-        return self.relation_list.intersection(git_links)
+    def get_git_below_5_links(self):
+        try:
+            git_links = set(key for key, value in self.git_links_below5.items() if value >= 2)
+            pure_git_links = list(set(git_links) - set(self.relation_list))
+            values = []
+            output = self.name + " - Indiv. entities: " + str(len(pure_git_links))
+            avg = 0
 
-    def get_match20_occ(self, nr_of_occ):
-        git_links = self.get_occurrence_below20(nr_of_occ)
-        return self.relation_list.intersection(git_links)
+            for key in pure_git_links:
+                avg += self.git_links_below5[key]
+                values.append(self.git_links_below5[key])
+            avg = avg / len(pure_git_links)
+            avg = round(avg, 2)
+            output += " Avg: "+str(avg)
+            counter = 0
+            for key in pure_git_links:
+                if self.git_links_below5[key] >= avg:
+                    counter += 1
+            output += " Remaining entities: "+str(counter)
+            print(output+" "+str(values))
+            return avg
+        except:
+            return 0
 
-    def get_match_occ_total(self, nr_of_occ):
-        git_links = self.get_occurrences_total(nr_of_occ)
-        return self.relation_list.intersection(git_links)
+    def get_median(self, git_links_below_x):
+        try:
+            git_links = set(key for key, value in git_links_below_x.items())
+            pure_git_links = list(set(git_links) - set(self.relation_list))
+            avg = 0
+            for key in pure_git_links:
+                avg += git_links_below_x[key]
+
+            avg = avg / len(pure_git_links)
+            avg = int(round(avg))
+            return avg
+        except:
+            return 0
+
+    def get_git_links(self, git_links_below_x,  k):
+        if k == 1:
+            k = 2
+
+        try:
+            git_links = set(key for key, value in git_links_below_x.items() if value >= k)
+            pure_git_links = list(set(git_links) - set(self.relation_list))
+
+            avg = 0
+            for key in pure_git_links:
+                avg += git_links_below_x[key]
+            avg = avg / len(pure_git_links)
+            avg = round(avg)
+
+            values = []
+            for key in pure_git_links:
+                if git_links_below_x[key] >= avg:
+                    values.append(key)
+            return pure_git_links
+        except:
+            return []
 
 
 

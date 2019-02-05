@@ -55,8 +55,6 @@ class Counter:
             with open('E:\\results.txt', 'a') as file:
                 line = ",".join([str(x) for x in self.results_count])
                 file.write(line + "\n")
-
-            print(self.results_count)
         except BaseException as e:
             print(e)
         end = time.time()
