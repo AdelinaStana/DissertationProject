@@ -221,7 +221,7 @@ class ClassModel:
 
     def get_median(self, git_links_below_x):
         try:
-            git_links = set(key for key, value in git_links_below_x.items())
+            git_links = set(key for key, value in git_links_below_x.items() if value >= 3)
             pure_git_links = list(set(git_links) - set(self.relation_list))
             avg = 0
             for key in pure_git_links:
@@ -238,7 +238,7 @@ class ClassModel:
             k = 2
 
         try:
-            git_links = set(key for key, value in git_links_below_x.items() if value >= k)
+            git_links = set(key for key, value in git_links_below_x.items() if value >= k*2)
             pure_git_links = list(set(git_links) - set(self.relation_list))
 
             avg = 0
