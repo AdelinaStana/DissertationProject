@@ -219,17 +219,19 @@ class ClassModel:
         except:
             return 0
 
-    def get_median(self, git_links_below_x):
+    def get_median(self, git_links_below_x, x, y, max_val):
         try:
-            git_links = set(key for key, value in git_links_below_x.items() if value >= 3)
+            git_links = set(key for key, value in git_links_below_x.items())
             pure_git_links = list(set(git_links) - set(self.relation_list))
-            avg = 0
-            for key in pure_git_links:
-                avg += git_links_below_x[key]
 
-            avg = avg / len(pure_git_links)
-            avg = int(round(avg))
-            return avg
+            points = []
+            for key in pure_git_links:
+                val = git_links_below_x[key]
+                x.append(self.unique_id)
+                y.append(val)
+                points.append(val)
+
+            max_val.append(max(points))
         except:
             return 0
 
@@ -238,7 +240,7 @@ class ClassModel:
             k = 2
 
         try:
-            git_links = set(key for key, value in git_links_below_x.items() if value >= k*2)
+            git_links = set(key for key, value in git_links_below_x.items() if value >= k)
             pure_git_links = list(set(git_links) - set(self.relation_list))
 
             avg = 0

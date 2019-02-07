@@ -1,13 +1,16 @@
 from Graph import Graph
 from threading import Thread
-
+import numpy as np
+import matplotlib.pyplot as plt
+import statistics
 
 class Counter:
     def __init__(self, structure_manager):
         self.results_count = []
-        for i in range(0, 6):
+        for i in range(0, 4):
             self.results_count.append(-1)
         self.structure_manager = structure_manager
+        self.proj_name = self.structure_manager.working_dir.replace("/~results", "").split("\\")[-1]
         self.working_dir = self.structure_manager.working_dir.replace("~Temp", "~results")
 
     def start_count(self):
@@ -61,7 +64,6 @@ class Counter:
 
         self.count_minus_code_and_git5_links()
         self.count_minus_code_and_git10_links()
-        self.count_minus_code_and_git20_links()
 
         with open('E:\\results.txt', 'a') as file:
             line = ",".join([str(x) for x in self.results_count])
@@ -188,79 +190,72 @@ class Counter:
         print("Count code and git20...")
 
     def count_minus_code_and_git5_links(self):
-        g = Graph(self.working_dir + "\\minus_code_and_git5_linkss")
-        avg = 0
-        counter = 0
+        g = Graph(self.working_dir + "\\minus_code_and_git5_links")
+        x = []
+        y = []
+        max_val = []
         try:
             for classItem in self.structure_manager.get_class_list():
-                k = classItem.get_median(classItem.git_links_below5)
-                avg += k
-                if k > 0:
-                    counter += 1
+                classItem.get_median(classItem.git_links_below5, x, y, max_val)
         except BaseException as e:
             print(e)
+        colors = (0, 0, 0)
+        area = np.pi * 3
 
-        avg = int(round(avg/counter))
+        max_val = list(set(max_val))
+        med = statistics.mean(max_val)
+        print(med)
+        plt.clf()
+        plt.scatter(x, y, s=area, c=colors, alpha=0.5)
+        plt.title(self.proj_name + " <5 cs")
+        plt.xlabel('LD unique id')
+        plt.ylabel('OCC')
+        plt.axhline(y=med, color='b')
+        plt.savefig("E:\\fig" + self.proj_name + "5.png")
 
         try:
             for classItem in self.structure_manager.get_class_list():
-                related_list = classItem.get_git_links(classItem.git_links_below5, avg)
+                related_list = classItem.get_git_links(classItem.git_links_below5, med)
                 for related in related_list:
                     g.add_edge(classItem.unique_id, related)
         except BaseException as e:
             print(e)
 
-        self.results_count[0] = avg
+        self.results_count[0] = med
         self.results_count[1] = g.number_of_edges()
 
     def count_minus_code_and_git10_links(self):
         g = Graph(self.working_dir + "\\minus_code_and_git10_linkss")
-        avg = 0
-        counter = 0
+        x = []
+        y = []
+        max_val = []
         try:
             for classItem in self.structure_manager.get_class_list():
-                k = classItem.get_median(classItem.git_links_below10)
-                avg += k
-                if k > 0:
-                    counter += 1
+                classItem.get_median(classItem.git_links_below10, x, y, max_val)
         except BaseException as e:
             print(e)
 
-        avg = int(round(avg / counter))
+        max_val = list(set(max_val))
+        med = statistics.mean(max_val)
+        print(med)
+
+        colors = (0, 0, 0)
+        area = np.pi * 3
+        plt.clf()
+        plt.scatter(x, y, s=area, c=colors, alpha=0.5)
+        plt.title(self.proj_name + " <10 cs")
+        plt.xlabel('LD unique id')
+        plt.ylabel('OCC')
+        plt.axhline(y=med, color='b')
+        plt.savefig("E:\\fig"+self.proj_name+"10.png")
 
         try:
             for classItem in self.structure_manager.get_class_list():
-                related_list = classItem.get_git_links(classItem.git_links_below10, avg)
+                related_list = classItem.get_git_links(classItem.git_links_below10, med)
                 for related in related_list:
                     g.add_edge(classItem.unique_id, related)
         except BaseException as e:
             print(e)
 
-        self.results_count[2] = avg
+        self.results_count[2] = med
         self.results_count[3] = g.number_of_edges()
-
-    def count_minus_code_and_git20_links(self):
-        g = Graph(self.working_dir + "\\minus_code_and_git20_linkss")
-        avg = 0
-        counter = 0
-        try:
-            for classItem in self.structure_manager.get_class_list():
-                k = classItem.get_median(classItem.git_links_below20)
-                avg += k
-                if k > 0:
-                    counter += 1
-        except BaseException as e:
-            print(e)
-
-        avg = int(round(avg / counter))
-
-        try:
-            for classItem in self.structure_manager.get_class_list():
-                related_list = classItem.get_git_links(classItem.git_links_below20, avg)
-                for related in related_list:
-                    g.add_edge(classItem.unique_id, related)
-        except BaseException as e:
-            print(e)
-
-        self.results_count[4] = avg
-        self.results_count[5] = g.number_of_edges()
