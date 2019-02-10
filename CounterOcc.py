@@ -14,7 +14,6 @@ class Counter:
         import time
 
         start = time.time()
-
         threads = []
 
         try:

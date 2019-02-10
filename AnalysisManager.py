@@ -54,8 +54,6 @@ class AnalysisManager:
 
     def load_structure_from_xml(self, file):
         self.structureManager.loadStructure(file)
-        counter = Counter(self.structureManager)
-        counter.start_count()
 
     def convert_to_xml(self):
         self.converted_files_list = []
@@ -160,8 +158,8 @@ class AnalysisManager:
         self.assign_old_paths()
 
         print("Build git model!")
-        self.build_git_model_with_comments()
+        #self.build_git_model_with_comments()
         # self.structureManager.save_to_xml()
         print("Start counter!")
         counter = Counter(self.structureManager)
-        counter.start_count()
+        counter.count_code_links()
