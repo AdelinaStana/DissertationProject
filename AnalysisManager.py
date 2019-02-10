@@ -41,7 +41,7 @@ class AnalysisManager:
                 path = class_item.rel_file_path
                 class_item.set_old_paths(self.old_paths_dict[path])
             except BaseException as e:
-                print(e)
+                print("rel path not found!")
 
     def set_files_list(self, files):
         self.filesList = files

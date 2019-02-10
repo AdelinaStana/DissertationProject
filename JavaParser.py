@@ -13,6 +13,9 @@ class JavaParser(Parser):
         name = self.get_name(_type)
         return name
 
+    def get_all_items(self, item, name):
+        return item.findall("{http://www.srcML.org/srcML/src}" + name)
+
     def get_methods(self, item, tag):
         methods = []
 

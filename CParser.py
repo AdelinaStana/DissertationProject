@@ -28,6 +28,12 @@ class CParser(Parser):
             pass
         return name
 
+    def get_all_items(self, item, name):
+        if str(item.tag).endswith(name):
+            return [item]
+        else:
+            return item.findall("{http://www.srcML.org/srcML/src}" + name)
+
     def get_methods(self, item, tag):
         methods = []
 
@@ -127,14 +133,14 @@ class CParser(Parser):
         namespace_list = self.get_namespaces(root)
         if len(namespace_list) > 0:
             for root_item in namespace_list:
-                root_item = self.get_namespace_root(root_item)
                 class_list += self.get_class_model(file, root_item)
 
-            item_list = root.findall("{http://www.srcML.org/srcML/src}class") + \
-                        root.findall("{http://www.srcML.org/srcML/src}struct") + \
-                        root.findall("{http://www.srcML.org/srcML/src}enum") + \
-                        root.findall("{http://www.srcML.org/srcML/src}interface")
+        item_list = root.findall("{http://www.srcML.org/srcML/src}class") + \
+                    root.findall("{http://www.srcML.org/srcML/src}struct") + \
+                    root.findall("{http://www.srcML.org/srcML/src}enum") + \
+                    root.findall("{http://www.srcML.org/srcML/src}interface")
 
-            for item in item_list:
-                class_list += self.get_class_model(file, item)
+        for item in item_list:
+            class_list += self.get_class_model(file, item)
+
         return class_list

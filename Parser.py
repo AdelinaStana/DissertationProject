@@ -3,8 +3,7 @@ from AttributeModel import *
 
 class Parser:
     def __init__(self, root_dir, unique_id):
-        self.root_dir = root_dir
-        self.working_dir = root_dir + "/~Temp/"
+        self.working_dir = root_dir
         self.unique_id = unique_id
 
     def get_item(self, item, name):
@@ -37,9 +36,6 @@ class Parser:
         name = self.get_name(_decl)
 
         return _type, name
-
-    def get_all_items(self, item, name):
-        return item.findall("{http://www.srcML.org/srcML/src}" + name)
 
     def get_text(self, atr):
         if atr is not None:
@@ -74,10 +70,3 @@ class Parser:
                 attributes.append(attribute)
 
         return attributes
-
-    def get_namespace_root(self, root):
-        if root.find("{http://www.srcML.org/srcML/src}block"):
-            root = root.find("{http://www.srcML.org/srcML/src}block")
-        if root.find("{http://www.srcML.org/srcML/src}namespace"):
-            return self.get_namespace_root(root)
-        return root
