@@ -57,6 +57,10 @@ class Counter:
         elapsed = end - start
         print(elapsed)
 
+        with open('E:\\results.txt', 'a') as file:
+            line = ",".join([str(x) for x in self.results_count])
+            file.write(line + "\n")
+
     def count_code_links(self):
         g = Graph(self.working_dir+"\\code_links")
         try:

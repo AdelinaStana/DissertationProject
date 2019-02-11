@@ -158,8 +158,8 @@ class AnalysisManager:
         self.assign_old_paths()
 
         print("Build git model!")
-        #self.build_git_model_with_comments()
+        self.build_git_model_with_comments()
         # self.structureManager.save_to_xml()
         print("Start counter!")
         counter = Counter(self.structureManager)
-        counter.count_code_links()
+        counter.start_count()
