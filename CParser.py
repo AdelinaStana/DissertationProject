@@ -2,7 +2,7 @@ from ClassModel import *
 from MethodModel import *
 import xml
 from Parser import Parser
-
+from AttributeModel import AttributeModel
 
 class CParser(Parser):
     def __init__(self, root_dir, unique_id):
@@ -78,6 +78,18 @@ class CParser(Parser):
     @staticmethod
     def get_namespaces(root):
         return root.findall("{http://www.srcML.org/srcML/src}namespace")
+
+    def get_all(self, root):
+        attributes = []
+        names = root.iter("{http://www.srcML.org/srcML/src}name")
+        for name in names:
+            attribute = AttributeModel()
+            t = self.get_text(name)
+            attribute.set_type(t)
+            attribute.set_name(t)
+
+            attributes.append(attribute)
+        return attributes
 
     def get_class_model(self, file, root):
         class_list = []
