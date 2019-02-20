@@ -76,7 +76,7 @@ class ClassModel:
         return False
 
     def add_if_exists(self, name, class_dict):
-        if name in class_dict.keys():
+        if name in class_dict.keys() and name != self.name:
             self.relation_list.add(class_dict[name].unique_id)
 
     def build_related(self, class_dict):

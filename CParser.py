@@ -120,6 +120,9 @@ class CParser(Parser):
             class_model.set_name(self.get_name(item))
             class_model.set_super_class(self.get_item_name(item, "super"))
 
+            for attribute in self.get_all(item):
+                class_model.add_attribute(attribute)
+
             block = self.get_item(item, 'block')
             for atr in block:
                 for attribute in self.get_attributes(atr, "decl_stmt"):
