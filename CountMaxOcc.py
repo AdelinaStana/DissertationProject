@@ -2,7 +2,7 @@ from Graph import Graph
 from threading import Thread
 
 
-class Counter:
+class CountMaxOcc:
     def __init__(self, structure_manager):
         self.results_count = []
         for i in range(0, 10):

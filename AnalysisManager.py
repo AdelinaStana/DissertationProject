@@ -5,6 +5,7 @@ from GitWrapper import GitWrapper
 from StructureManager import *
 from SrcMLWrapper import SrcMLWrapper
 from Counter import Counter
+from PlotCountResults import PlotCountResults
 
 
 class AnalysisManager:
@@ -89,14 +90,10 @@ class AnalysisManager:
                 nr_of_commits_str = file.split('FilesChanged_')[1]
                 commit_size = int(nr_of_commits_str)
                 git_link_list = set()
-                temp_list = datafile.split('\n')
-                list_of_lines = []
-                for line in temp_list:
-                    if line.strip() != '':
-                        list_of_lines.append(line)
-                for index in range(0, len(list_of_lines)-1):
-                    line = list_of_lines[index]
 
+                list_of_lines = datafile.split('\n')
+                for index in range(0, len(list_of_lines)-1):
+                    line = list_of_lines[index].strip()
                     if re.search("\+\+\+ b.*", line):
                         file_name = line.replace('+++ b', 'a')
                         file_name = file_name.strip()
@@ -163,3 +160,7 @@ class AnalysisManager:
         print("Start counter!")
         counter = Counter(self.structureManager)
         counter.start_count()
+
+        counter = PlotCountResults(self.structureManager)
+        counter.start_count()
+

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import statistics
 
 
-class Counter:
+class PlotCountResults:
     def __init__(self, structure_manager):
         self.results_count = []
         for i in range(0, 4):
@@ -17,7 +17,7 @@ class Counter:
         self.count_minus_code_and_git5_links()
         self.count_minus_code_and_git10_links()
 
-        with open('E:\\results.txt', 'a') as file:
+        with open('E:\\results_graph.txt', 'a') as file:
             line = ",".join([str(x) for x in self.results_count])
             file.write(line + "\n")
 

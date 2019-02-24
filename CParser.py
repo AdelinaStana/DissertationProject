@@ -119,7 +119,7 @@ class CParser(Parser):
             class_model.set_unique_id(self.unique_id)
             class_model.set_name(self.get_name(item))
             class_model.set_super_class(self.get_item_name(item, "super"))
-
+            # workaround
             for attribute in self.get_all(item):
                 class_model.add_attribute(attribute)
 
