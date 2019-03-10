@@ -122,7 +122,6 @@ class AnalysisManager:
                         list_of_lines.append(line)
                 for index in range(0, len(list_of_lines)-1):
                     line = list_of_lines[index]
-
                     if re.search("\+\+\+ b.*", line):
                         file_name = line.replace('+++ b', 'a')
                         file_name = file_name.strip()
@@ -155,7 +154,7 @@ class AnalysisManager:
         self.assign_old_paths()
 
         print("Build git model!")
-        self.build_git_model_with_comments()
+        self.build_git_model_without_comments()
         # self.structureManager.save_to_xml()
         print("Start counter!")
         counter = Counter(self.structureManager)

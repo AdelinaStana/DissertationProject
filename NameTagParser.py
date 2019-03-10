@@ -1,8 +1,8 @@
 from ClassModel import *
-from MethodModel import *
 import xml
 from Parser import Parser
 from AttributeModel import AttributeModel
+
 
 class NameTagParser(Parser):
     def __init__(self, root_dir, unique_id):
@@ -11,12 +11,6 @@ class NameTagParser(Parser):
     def get_all_structures(self, root):
         item_list = []
         cls = root.iter("{http://www.srcML.org/srcML/src}class")
-        for item in cls:
-            item_list.append(item)
-        cls = root.iter("{http://www.srcML.org/srcML/src}struct")
-        for item in cls:
-            item_list.append(item)
-        cls = root.iter("{http://www.srcML.org/srcML/src}enum")
         for item in cls:
             item_list.append(item)
         cls = root.iter("{http://www.srcML.org/srcML/src}interface")
@@ -41,21 +35,25 @@ class NameTagParser(Parser):
 
         for item in item_list:
             class_model = ClassModel()
-            self.unique_id += 1
-
-            file_path = file.replace(self.working_dir, 'a/')
-            file_path = file_path.replace(".xml", "")
-            file_path = file_path.replace("\\", "/")
-
-            class_model.set_file(file_path)
-            class_model.set_unique_id(self.unique_id)
             class_model.set_name(self.get_name(item))
-            class_model.set_super_class(self.get_item_name(item, "super"))
-            # workaround
-            for attribute in self.get_all(item):
-                class_model.add_attribute(attribute)
 
-            class_list.append(class_model)
+            if class_model.name != "None":
+                self.unique_id += 1
+
+                file_path = file.replace(self.working_dir, 'a/')
+                file_path = file_path.replace(".xml", "")
+                file_path = file_path.replace("\\", "/")
+
+                class_model.set_file(file_path)
+                class_model.set_unique_id(self.unique_id)
+                class_model.set_super_class(self.get_item_name(item, "super"))
+
+                # workaround
+                for attribute in self.get_all(item):
+                    class_model.add_attribute(attribute)
+
+                class_list.append(class_model)
+
         return class_list
 
     def get_class_list(self, file):
